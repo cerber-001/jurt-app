@@ -5,7 +5,7 @@ import type { AppData } from './types'
 
 const LS = {
   code: 'jurt.code', group: 'jurt.group', key: 'jurt.adminKey', lang: 'jurt.lang', data: 'jurt.data',
-  done: 'jurt.done', theme: 'jurt.theme',
+  done: 'jurt.done', theme: 'jurt.theme', v3: 'jurt.v3Key', city: 'jurt.city',
 }
 const ls = {
   get: (k: string) => { try { return localStorage.getItem(k) || '' } catch { return '' } },
@@ -16,7 +16,9 @@ export type Lang = 'ru' | 'kk' | 'en'
 export const lang = signal<Lang>((ls.get(LS.lang) as Lang) || 'ru')
 export const code = signal(ls.get(LS.code))          // личный код паломника (?p=)
 export const groupCode = signal(ls.get(LS.group))    // код группы (?g=)
-export const adminKey = signal(ls.get(LS.key))       // ключ штаба — вводится вручную организатором
+export const adminKey = signal(ls.get(LS.key))       // ключ штаба Apps Script — вводится вручную организатором
+export const v3Key = signal(ls.get(LS.v3))           // ключ v3 (Supabase): роль admin или ustaz, см. v3.ts
+export const cityId = signal(ls.get(LS.city))        // город для намаза/погоды, выбранный вручную ('' = по программе)
 export const data = signal<AppData | null>(parse(ls.get(LS.data)))
 export const loading = signal(false)
 export const error = signal('')
@@ -28,6 +30,8 @@ effect(() => ls.set(LS.lang, lang.value))
 effect(() => ls.set(LS.code, code.value))
 effect(() => ls.set(LS.group, groupCode.value))
 effect(() => ls.set(LS.key, adminKey.value))
+effect(() => ls.set(LS.v3, v3Key.value))
+effect(() => ls.set(LS.city, cityId.value))
 effect(() => ls.set(LS.done, JSON.stringify(done.value)))
 effect(() => { if (data.value) ls.set(LS.data, JSON.stringify(data.value)) })
 

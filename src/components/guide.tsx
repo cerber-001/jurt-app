@@ -4,6 +4,8 @@ import { useSignal } from '@preact/signals'
 import { content, contentError, loadContent, type Dua, type Step, type Zikr } from '../lib/content'
 import { done, toggleDone } from '../lib/store'
 import { Card, Html, Icon } from './ui'
+import { pick } from '../lib/i18n'
+import { Notes } from './notes'
 
 type Mode = 'first' | 'again' | 'mecca'
 const modeLS = 'jurt.mode'
@@ -65,6 +67,7 @@ export function StepCard({ s, mode, canCheck }: { s: Step; mode: Mode; canCheck:
       {open && (
         <div class="acc-b"><div class="acc-wrap"><div class="acc-in">
           <Html html={s.html} />
+          <Notes id={'step:' + s.id} />
           {canCheck && <button class="donebtn" onClick={() => toggleDone(s.id)}>{isDone ? 'Выполнено ✓' : 'Выполнил(а)'}</button>}
         </div></div></div>
       )}
@@ -103,7 +106,7 @@ export function DuaCard({ d }: { d: Dua }) {
         <div class="ico"><Icon id={d.icon} size={24} /></div>
         <div class="st"><b>{d.title}</b>{!open && <span class="pv">{d.preview}</span>}</div>
       </div>
-      {open && <div class="acc-b"><div class="acc-wrap"><div class="acc-in"><Html html={d.html} /></div></div></div>}
+      {open && <div class="acc-b"><div class="acc-wrap"><div class="acc-in"><Html html={d.html} /><Notes id={'dua:' + d.id} /></div></div></div>}
     </section>
   )
 }
@@ -139,7 +142,7 @@ export function ZikrList() {
     <>
       {c.zikr.map((z: Zikr) => (
         <Card key={z.id} cls="zk">
-          <h2>{z.n.ru}{z.goal ? <span class="pill">{z.goal}×</span> : null}</h2>
+          <h2>{pick(z.n)}{z.goal ? <span class="pill">{z.goal}×</span> : null}</h2>
           {(z.ph ?? [{ ar: String(z.ar ?? ''), tr: String(z.tr ?? ''), ru: String(z.ru ?? '') }]).map((p, i) => (
             <div class="ph" key={i}>
               <div class="ar" dir="rtl">{p.ar}</div>
@@ -149,6 +152,7 @@ export function ZikrList() {
           ))}
           {z.h && <p class="muted">{String(z.h)}</p>}
           {z.src && <div class="src">{String(z.src)}</div>}
+          <Notes id={'zikr:' + z.id} />
         </Card>
       ))}
     </>

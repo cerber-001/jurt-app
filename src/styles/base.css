@@ -89,3 +89,41 @@ table.tbl th{color:var(--muted);font-weight:600;font-size:.78rem}
 /* режим умры: первая / повторная / из Мекки — как в v2 (блоки помечены классами в контенте) */
 :root[data-mode="mecca"] .not-mecca{display:none !important}
 :root:not([data-mode="mecca"]) .only-mecca{display:none !important}
+
+/* v3 этап 1: «Сегодня», «Где группа», витрина, переключатель языка */
+.now{font-size:1.15rem;margin:.3rem 0}
+.lang{display:flex;gap:.2rem;margin-left:.4rem}
+.lang button{background:transparent;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;font:inherit;font-size:.68rem;padding:.1rem .45rem;cursor:pointer;line-height:1.4}
+.lang button.on{background:#fff;color:var(--teal);font-weight:700}
+.map{height:min(60vh,420px);border-radius:var(--r-s);overflow:hidden;border:1px solid var(--line);background:var(--sand)}
+.peer{display:flex;align-items:center;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--line)}
+.peer:last-child{border-bottom:0}
+.peer .dot{width:.7rem;height:.7rem;border-radius:50%;background:var(--teal);flex:none}
+.peer.lost .dot,.peer.sos .dot{background:var(--red)}
+.peer small{color:var(--muted);margin-left:auto;white-space:nowrap}
+.pin{font-size:1.4rem;line-height:1;transform:translate(-50%,-100%);display:inline-block}
+.pname{position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:.7rem;font-weight:700;background:var(--card);color:var(--ink);padding:.05rem .35rem;border-radius:999px;border:1px solid var(--line);margin-top:.45rem}
+.pdot{width:14px;height:14px;border-radius:50%;background:var(--teal);border:2px solid #fff;box-shadow:0 0 0 2px var(--teal)}
+.pdot.me{background:var(--orange);box-shadow:0 0 0 2px var(--orange)}
+.pdot.lost{background:var(--red);box-shadow:0 0 0 4px var(--redbg)}
+.note{padding:.35rem 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.note:last-child{border-bottom:0}
+.note small{color:var(--muted);display:block}
+.trip{display:block;color:inherit;text-decoration:none}
+.trip h2{margin:0 0 .2rem}
+/* заметки устаза к блокам гида */
+.unotes{margin-top:.8rem}
+.unote{background:var(--sand);border-left:3px solid var(--orange);border-radius:var(--r-s);padding:.6rem .8rem;margin:.5rem 0}
+.unote .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--orange-t,var(--orange));font-weight:800;display:flex;gap:.5rem;align-items:center}
+.unote p{margin:.3rem 0;white-space:pre-line}
+.unote .btns{margin-top:.3rem}
+.unote.edit textarea,.unote.edit input{width:100%;margin:.3rem 0}
+.chkl{display:flex;gap:.4rem;align-items:center;font-size:.9rem;color:var(--muted);margin:.3rem 0}
+.chkl input{width:auto;margin:0}
+/* штаб организатора v3 */
+table.tbl input{width:4.5rem;padding:.25rem .4rem;font-size:.85rem;margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 .8rem}
+@media (max-width:480px){.grid2{grid-template-columns:1fr}}
+.sec{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+.sec h3{margin:0}
+.ok{color:var(--teal);font-size:.9rem}

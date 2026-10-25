@@ -1,6 +1,6 @@
 /* Клиент Apps Script. Запросы байт в байт как у v2 (umra.jurt.kz), поэтому обе версии
    читают и пишут одни и те же данные: сервер один. Фаза 1 архитектуры v3. */
-import type { AdminState, ApiError, AppData } from './types'
+import type { AdminState, ApiError, AppData, Group } from './types'
 
 export const API = import.meta.env.VITE_API_URL as string
 const CODE_RE = /^[a-z0-9]{6,12}$/
@@ -47,4 +47,7 @@ export const admin = {
     post<AdminState>({ a: 'poll', k, g, ...p }),
   pollSet: (k: string, g: string, id: string, status: 'идёт' | 'закрыт' | 'скрыт', ends?: number) =>
     post<AdminState>({ a: 'pollSet', k, g, id, status, ends }),
+  /** Карточка группы: поля, которых нет в data, сервер оставляет как были; isNew — новая строка в «Группах» */
+  group: (k: string, g: string, data: Partial<Group> & { code?: string }, isNew = false) =>
+    post<AdminState>({ a: 'group', k, g, data, isNew }),
 }

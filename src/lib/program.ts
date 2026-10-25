@@ -4,7 +4,7 @@
 export interface ProgramItem {
   t: string; w: string; p?: string; m?: string; tr?: string; who?: string; pay?: string; st?: string
 }
-export interface ProgramDay { id: string; date: string; city: string; items: ProgramItem[]; title?: string }
+export interface ProgramDay { id: string; date: string; city: string; items: ProgramItem[]; title?: string; tz?: string }
 export interface Program {
   title: string; subtitle: string; group: string; updated: string; version: string
   legend: Record<string, string> | string[]

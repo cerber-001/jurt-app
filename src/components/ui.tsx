@@ -1,6 +1,8 @@
 import type { ComponentChildren } from 'preact'
 import { useEffect } from 'preact/hooks'
 import { loadIcons } from '../lib/content'
+import { LANGS, t } from '../lib/i18n'
+import { lang } from '../lib/store'
 
 export function Icon({ id, size = 22 }: { id: string; size?: number }) {
   useEffect(() => { loadIcons() }, [])
@@ -13,7 +15,16 @@ export function Top({ title, sub, role }: { title: string; sub?: string; role: s
       <a href="/" aria-label="На главную"><img class="logo" src="/logo-white.svg" alt="JURT" /></a>
       <div class="ttl"><b>{title}</b>{sub && <small>{sub}</small>}</div>
       <span class="role">{role}</span>
+      <LangSwitch />
     </header>
+  )
+}
+
+export function LangSwitch() {
+  return (
+    <nav class="lang" aria-label={t('c.lang')}>
+      {LANGS.map(([k, label]) => <button key={k} class={lang.value === k ? 'on' : ''} onClick={() => (lang.value = k)}>{label}</button>)}
+    </nav>
   )
 }
 
