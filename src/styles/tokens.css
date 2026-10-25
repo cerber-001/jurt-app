@@ -1,0 +1,31 @@
+/* Фирменный стиль JURT v2 «Бархатный сапфир» — те же токены, что в umra.jurt.kz */
+@font-face{ font-family:"Exo 2"; src:url("/fonts/exo2-regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+@font-face{ font-family:"Exo 2"; src:url("/fonts/exo2-semibold.woff2") format("woff2"); font-weight:600; font-display:swap; }
+@font-face{ font-family:"Exo 2"; src:url("/fonts/exo2-bold.woff2") format("woff2"); font-weight:700 900; font-display:swap; }
+@font-face{ font-family:"Amiri"; src:url("/fonts/amiri-400.woff2") format("woff2"); font-weight:400; font-display:swap; }
+
+:root{
+  --teal:#005A5C; --teal-d:#004C4E; --teal-l:#0A7275; --orange:#F07A1E; --orange-t:#A3500F;
+  --bg:#F4EDE1; --card:#FFFDF9; --ink:#00292C; --muted:#4F6466; --line:#E2D8C8;
+  --sand:#FBF3E6; --mint:#E4EFEC; --red:#B3261E; --redbg:#FCEDEB; --done:#1E8E5A; --gz:#CFEBDD;
+  --shadow:0 1px 2px rgba(10,40,40,.06), 0 6px 20px rgba(10,40,40,.06);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --r:16px; --r-s:10px;
+  --font:"Exo 2", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ar:"Amiri", "Scheherazade New", serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --teal:#1A8F8D; --teal-d:#8FD8D5; --teal-l:#3FB3B0; --orange:#F38B3A; --orange-t:#F5A866;
+    --bg:#001A1C; --card:#00292C; --ink:#F4EDE1; --muted:#A3B8B6; --line:#0F4245;
+    --sand:#2A2117; --mint:#063A3B; --red:#FF8A80; --redbg:#3A1C1A; --done:#4CC38A; --gz:#1E3B2E;
+    --shadow:0 1px 0 rgba(255,255,255,.03); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#1A8F8D; --teal-d:#8FD8D5; --teal-l:#3FB3B0; --orange:#F38B3A; --orange-t:#F5A866;
+  --bg:#001A1C; --card:#00292C; --ink:#F4EDE1; --muted:#A3B8B6; --line:#0F4245;
+  --sand:#2A2117; --mint:#063A3B; --red:#FF8A80; --redbg:#3A1C1A; --done:#4CC38A; --gz:#1E3B2E;
+  --shadow:0 1px 0 rgba(255,255,255,.03); color-scheme:dark;
+}
