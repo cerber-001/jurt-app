@@ -2,7 +2,7 @@
    только в localStorage. Паспортов и оплат сервер не отдаёт. Записи идут в ту же таблицу Main_v2,
    что и v2 — обе версии видят изменения сразу. */
 import { useEffect, useState } from 'preact/hooks'
-import { admin } from '../lib/api'
+import { admin, apiMode, setApiMode } from '../lib/api'
 import { adminKey, groupCode, v3Key } from '../lib/store'
 import { checkKey, dropKey, v3Role } from '../lib/notes'
 import { listTripsAll, tripUpsert, type Trip } from '../lib/v3'
@@ -40,6 +40,8 @@ export function Admin() {
             <label class="f">Группа{st?.groups?.length ? (
               <select value={g} onChange={e => { setG((e.target as HTMLSelectElement).value) }}>{st.groups.map(x => <option key={x.code} value={x.code}>{x.code} · {x.name}</option>)}</select>
             ) : <input value={g} onInput={e => setG(inp(e).toUpperCase())} />}</label>
+            <label class="f">Источник данных<select value={apiMode.value} onChange={e => { setApiMode((e.target as HTMLSelectElement).value); setSt(null) }}>
+              <option value="v2">Таблица Main_v2 (Apps Script)</option><option value="v3">Supabase (v3, этап 2)</option></select></label>
             <div class="btns"><button class="btn" type="submit" disabled={busy}>{st ? 'Обновить' : 'Войти'}</button>
               {st && <button class="btn ghost" type="button" onClick={() => { adminKey.value = ''; setKey(''); setSt(null) }}>Выйти</button>}</div>
           </form>

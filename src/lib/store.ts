@@ -1,6 +1,6 @@
 /* Состояние приложения на сигналах. Личный код и ключ штаба — только в localStorage устройства. */
 import { signal, computed, effect } from '@preact/signals'
-import { fetchApp, ApiFail } from './api'
+import { fetchApp, ApiFail, setApiMode } from './api'
 import type { AppData } from './types'
 
 const LS = {
@@ -38,12 +38,13 @@ effect(() => { if (data.value) ls.set(LS.data, JSON.stringify(data.value)) })
 export const me = computed(() => data.value?.me ?? null)
 export const group = computed(() => data.value?.group ?? null)
 
-/** Коды из адреса (?p=…, ?g=…) — как у v2, личная ссылка та же самая */
+/** Коды из адреса (?p=…, ?g=…) — как у v2, личная ссылка та же самая; ?api=v3|v2 — какой сервер спрашивать */
 export function readUrlCodes() {
   const q = new URLSearchParams(location.search)
-  const p = q.get('p'), g = q.get('g')
+  const p = q.get('p'), g = q.get('g'), a = q.get('api')
   if (p) code.value = p.trim().toLowerCase()
   if (g) groupCode.value = g.trim().toUpperCase()
+  if (a) setApiMode(a.trim().toLowerCase())
 }
 
 export async function refresh() {

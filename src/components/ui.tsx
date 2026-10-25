@@ -1,4 +1,5 @@
 import type { ComponentChildren } from 'preact'
+import { apiMode } from '../lib/api'
 import { useEffect } from 'preact/hooks'
 import { loadIcons } from '../lib/content'
 import { LANGS, t } from '../lib/i18n'
@@ -15,6 +16,7 @@ export function Top({ title, sub, role }: { title: string; sub?: string; role: s
       <a href="/" aria-label="На главную"><img class="logo" src="/logo-white.svg" alt="JURT" /></a>
       <div class="ttl"><b>{title}</b>{sub && <small>{sub}</small>}</div>
       <span class="role">{role}</span>
+      {apiMode.value === 'v3' && <span class="role" title="Данные из Supabase (этап 2); без ?api=v3 — из таблицы Main_v2">v3</span>}
       <LangSwitch />
     </header>
   )

@@ -31,8 +31,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,json}'],
         runtimeCaching: [
           {
-            // Apps Script: сеть в приоритете, при офлайне — последний ответ
-            urlPattern: /^https:\/\/script\.google(usercontent)?\.com\/.*/i,
+            // API (Apps Script или Edge Function Supabase): сеть в приоритете, при офлайне — последний ответ
+            urlPattern: /^https:\/\/(script\.google(usercontent)?\.com|[a-z0-9]+\.supabase\.co\/functions)\/.*/i,
             handler: 'NetworkFirst',
             options: { cacheName: 'api', networkTimeoutSeconds: 8, expiration: { maxEntries: 20, maxAgeSeconds: 7 * 24 * 3600 } },
           },
