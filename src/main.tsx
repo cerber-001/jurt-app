@@ -3,6 +3,7 @@ import { registerSW } from 'virtual:pwa-register'
 import './styles/tokens.css'
 import './styles/base.css'
 import './styles/content.css'
+import './styles/core.css'
 import { App } from './app'
 
 registerSW({ immediate: true })
