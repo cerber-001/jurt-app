@@ -1,6 +1,7 @@
 /* Ядро «как iPhone»: экран «Сейчас», режим «Рядом» (шаги умры по одному на экран),
    «Программа» (сегодня с подсветкой) и меню «Ещё». Время — clock.ts (с демо ?at=). */
 import { useEffect, useState } from 'preact/hooks'
+import { PackList, Stories } from './extras'
 import { signal } from '@preact/signals'
 import { DayPlan, Today, loadProgram, program, programError, useCity } from './today'
 import { DuaList, ModePicker, Steps, ZikrList, useMode } from './guide'
@@ -233,6 +234,8 @@ const MORE: [string, string, string][] = [
   ['zikr', 'more.zikr', 'b-prayer-mat'],
   ['prayer', 'more.prayer', 'b-mihrab'],
   ['where', 'more.where', 'b-pilgrim'],
+  ['pack', 'more.pack', 'i-plane'],
+  ['stories', 'more.stories', 'i-voice'],
 ]
 
 export function More({ sub, go }: { sub: string; go: (h: string) => void }) {
@@ -248,6 +251,8 @@ export function More({ sub, go }: { sub: string; go: (h: string) => void }) {
         {sub === 'zikr' && <ZikrList />}
         {sub === 'prayer' && <Today />}
         {sub === 'where' && <Where />}
+        {sub === 'pack' && <PackList />}
+        {sub === 'stories' && <Stories />}
       </>
     )
   }

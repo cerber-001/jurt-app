@@ -133,6 +133,8 @@ const S: Record<string, [string, string, string]> = {
   'more.prayer': ['Намаз, кибла, погода', 'Намаз, құбыла, ауа райы', 'Prayer, qibla, weather'],
   'more.where': ['Карта: где группа', 'Карта: топ қайда', 'Map: where is the group'],
   'more.haram': ['Харам в 3D (umra.jurt.kz)', 'Харам 3D (umra.jurt.kz)', 'Haram in 3D (umra.jurt.kz)'],
+  'more.pack': ['Сборы: что взять', 'Жинақ: не алу керек', 'Packing list'],
+  'more.stories': ['Истории мест: Ухуд', 'Орындар тарихы: Ухуд', 'Stories of places: Uhud'],
   'more.back': ['← Ещё', '← Тағы', '← More'],
   'trips.title': ['Поездки', 'Сапарлар', 'Trips'],
   'trips.sub': ['витрина JURT', 'JURT сапарлары', 'JURT trips'],

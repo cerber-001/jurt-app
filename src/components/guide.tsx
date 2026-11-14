@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'preact/hooks'
 import { useSignal } from '@preact/signals'
 import { content, contentError, loadContent, type Dua, type Step, type Zikr } from '../lib/content'
-import { done, toggleDone } from '../lib/store'
+import { done, ls, toggleDone } from '../lib/store'
 import { Card, Html, Icon } from './ui'
 import { pick } from '../lib/i18n'
 import { Notes } from './notes'
@@ -150,11 +150,27 @@ export function ZikrList() {
               <div class="ru">{p.ru}</div>
             </div>
           ))}
+          {z.goal ? <ZikrTap id={z.id} goal={+z.goal} /> : null}
           {z.h && <p class="muted">{String(z.h)}</p>}
           {z.src && <div class="src">{String(z.src)}</div>}
           <Notes id={'zikr:' + z.id} />
         </Card>
       ))}
     </>
+  )
+}
+
+/** Тап-счётчик зикра: n/цель, вибрация, хранится на устройстве (jurt.zk-<id>) */
+function ZikrTap({ id, goal }: { id: string; goal: number }) {
+  const key = 'jurt.zk-' + id
+  const [n, setN] = useState(() => +ls.get(key) || 0)
+  const put = (v: number) => { setN(v); ls.set(key, v ? String(v) : '') }
+  const tap = () => { const v = n + 1; navigator.vibrate?.(v % goal === 0 ? [70, 50, 140] : 25); put(v) }
+  return (
+    <div class="crow zktap">
+      <button class="zkbtn" onClick={tap} aria-label="Плюс один">{n}<small>/{goal}</small></button>
+      <button onClick={() => put(Math.max(0, n - 1))} disabled={!n}>− 1</button>
+      <button onClick={() => put(0)} disabled={!n}>0</button>
+    </div>
   )
 }

@@ -13,7 +13,8 @@ export function App() {
   return (
     <LocationProvider>
       <Router>
-        <Route path="/" component={Home} />
+        <Route path="/" component={Pilgrim} />
+        <Route path="/roles" component={Home} />
         <Route path="/p" component={Pilgrim} />
         <Route path="/ustaz" component={Ustaz} />
         <Route path="/admin" component={Admin} />

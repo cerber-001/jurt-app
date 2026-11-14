@@ -1,6 +1,7 @@
 import type { ComponentChildren } from 'preact'
 import { apiMode } from '../lib/api'
-import { useEffect } from 'preact/hooks'
+import { useEffect, useRef } from 'preact/hooks'
+import { hydrateCounters } from '../lib/counters'
 import { loadIcons } from '../lib/content'
 import { LANGS, t } from '../lib/i18n'
 import { lang } from '../lib/store'
@@ -35,7 +36,9 @@ export function Card({ children, cls = '' }: { children: ComponentChildren; cls?
 }
 
 export function Html({ html, cls }: { html: string; cls?: string }) {
-  return <div class={cls} dangerouslySetInnerHTML={{ __html: html }} />
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => hydrateCounters(ref.current), [html])
+  return <div ref={ref} class={cls} dangerouslySetInnerHTML={{ __html: html }} />
 }
 
 export function Tabs<T extends string>({ items, cur, set }: { items: [T, string][]; cur: T; set: (t: T) => void }) {
@@ -51,8 +54,7 @@ export function Tabs<T extends string>({ items, cur, set }: { items: [T, string]
 export function Foot() {
   return (
     <p class="foot">
-      JURT · платформа паломника, демо v3 · <a href="https://umra.jurt.kz/" target="_blank" rel="noopener">гид v2</a>
-      <a href="/">роли</a>
+      JURT · <a href="/ustaz">устазу</a> · <a href="/admin">штаб</a>
     </p>
   )
 }

@@ -7,7 +7,7 @@ const LS = {
   code: 'jurt.code', group: 'jurt.group', key: 'jurt.adminKey', lang: 'jurt.lang', data: 'jurt.data',
   done: 'jurt.done', theme: 'jurt.theme', v3: 'jurt.v3Key', city: 'jurt.city',
 }
-const ls = {
+export const ls = {
   get: (k: string) => { try { return localStorage.getItem(k) || '' } catch { return '' } },
   set: (k: string, v: string) => { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k) } catch { /* приватный режим */ } },
 }
