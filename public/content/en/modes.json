@@ -1,0 +1,31 @@
+{
+ "kinds": [
+  {
+   "id": "first",
+   "title": "First Umrah",
+   "hint": "in detail"
+  },
+  {
+   "id": "again",
+   "title": "Done it before",
+   "hint": "before · in short"
+  },
+  {
+   "id": "mecca",
+   "title": "Another one on this trip",
+   "hint": "from Makkah · in short"
+  }
+ ],
+ "details": [
+  {
+   "id": "what-changes",
+   "title": "What changes?",
+   "html": "<ul>\n    <li><b>The rites are the same</b> for everyone: ihram, tawaf, sa'i, shaving — in the same order.</li>\n    <li><b>“Done it before”</b> — you performed Umrah in past years. The steps are short: actions and du'as, without explanations. You can bring back the details in “More” → “Umrah steps”.</li>\n    <li><b>“Another one on this trip”</b> — a second (third…) Umrah on the same trip, already from Makkah. Ihram is put on <b>outside the Haram boundary</b>: usually at Tan'im (Masjid Aisha, ≈ 7.5 km from the Haram, by taxi), or at another place outside the boundary, for example at Ji'ranah. Steps 1–5 will show this.</li>\n    <li><b>Shaving in the second Umrah:</b> if your head was shaved after the first one, pass a razor over the whole head again (Hanafis require this). Women again shorten their hair by the length of a finger joint.</li>\n    <li><b>These buttons are about your own Umrah.</b> Umrah for another person (badal) is separate, below.</li>\n    <li>Marks from a previous Umrah — the “Reset Umrah marks” button at the bottom of the tab.</li>\n   </ul>"
+  },
+  {
+   "id": "badal",
+   "title": "Umrah for another person (badal)",
+   "html": "<ul>\n    <li><b>Badal</b> — Umrah on behalf of another person: for someone who has died (for example, for a father or mother) or, voluntarily, for someone who is alive. For Hanafis this is permitted (al-Hidayah, “Hajj on behalf of another”).</li>\n    <li><b>Intention</b> — on their behalf: “O Allah, I intend to perform Umrah for (name), make it easy for me and accept it”. In the talbiyah: “Labbayka 'an (name)” — “Here I am, O Allah, on behalf of so-and-so”.</li>\n    <li><b>One Umrah — for one person.</b> The steps are the same as in your own Umrah.</li>\n    <li>Badal is usually done on the same trip, already from Makkah — choose “Another one on this trip” at the top: steps 1–5 will show the miqat at Tan'im.</li>\n    <li><b>Dedicating the reward</b> — is something else: you perform Umrah for yourself, and then in du'a you ask for its reward to be passed on to those who have died. The reward can be dedicated to many people at once.</li>\n   </ul>\n   <div class=\"flag\"><b>⚑ Check with a scholar of Hanafi fiqh:</b> whether you must first perform your own Umrah; when Umrah may be done for a living person; whether one may take payment for badal.</div>"
+  }
+ ]
+}

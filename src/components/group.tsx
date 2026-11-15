@@ -26,7 +26,7 @@ export function GroupCard({ d, personal }: { d: AppData; personal: boolean }) {
         <span>Мекка</span><span>{g.mecca}</span>
         {g.flights && <><span>Рейсы</span><span>{g.flights}</span></>}
       </div>
-      {personal && d.chat && <a class="btn sm" href={d.chat} target="_blank" rel="noopener">Чат группы в WhatsApp</a>}
+      {personal && d.chat && <a class="btn sm" href={d.chat} target="_blank" rel="noopener noreferrer">Чат группы в WhatsApp</a>}
       <p class="muted" style="font-size:.8rem">Обновлено {d.updated}{loading.value ? ' · обновляю…' : ''}</p>
     </Card>
   )
@@ -53,7 +53,7 @@ export function Points({ d }: { d: AppData }) {
       <h3>Места сбора</h3>
       <ul class="list">
         {d.points.map((p, i) => (
-          <li key={i}><b>{p.city}: {p.name}</b><br /><small>{p.how}</small>{p.map && <> · <a href={p.map} target="_blank" rel="noopener">карта</a></>}</li>
+          <li key={i}><b>{p.city}: {p.name}</b><br /><small>{p.how}</small>{p.map && <> · <a class="tap44" href={p.map} target="_blank" rel="noopener noreferrer">карта</a></>}</li>
         ))}
       </ul>
     </Card>
@@ -90,7 +90,7 @@ export function FullProgram() {
   const [p, setP] = useState<Program | null>(null)
   const [err, setErr] = useState('')
   useEffect(() => { fetchProgram().then(setP).catch(e => setErr(String(e))) }, [])
-  if (err) return <p class="err">{err}</p>
+  if (err) return <p class="err" role="alert">{err}</p>
   if (!p) return <Card><div class="sk" /></Card>
   return (
     <>
@@ -147,10 +147,11 @@ export function Polls({ d, canVote }: { d: AppData; canVote: boolean }) {
             const n = p.counts ? p.counts[i] : null
             const pct = n != null && p.voted ? Math.round((n / p.voted) * 100) : 0
             return (
-              <div key={i} class={'opt' + (p.mine === i ? ' mine' : '')} onClick={() => cast(p, i)} role={canVote && p.open ? 'button' : undefined}>
+              <button type="button" key={i} class={'opt' + (p.mine === i ? ' mine' : '')} onClick={() => cast(p, i)}
+                aria-pressed={p.mine === i} aria-disabled={!canVote || !p.open || undefined}>
                 <span style="flex:1">{o}</span>
-                {n != null && <><span class="bar"><i style={{ width: pct + '%' }} /></span><span class="n">{n}</span></>}
-              </div>
+                {n != null && <><span class="bar" aria-hidden="true"><i style={{ width: pct + '%' }} /></span><span class="n">{n}</span></>}
+              </button>
             )
           })}
           {p.after && p.open && <small class="muted">Итоги покажем после закрытия</small>}

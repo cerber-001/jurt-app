@@ -61,7 +61,7 @@ function Editor({ id, n, onDone }: { id: string; n?: UstazNote; onDone?: () => v
       {notesTrip.value && (
         <label class="chkl"><input type="checkbox" checked={forTrip} onChange={e => setForTrip((e.target as HTMLInputElement).checked)} /> {t('note.onlytrip')} {notesTrip.value}</label>
       )}
-      {err && <p class="err">{err}</p>}
+      {err && <p class="err" role="alert">{err}</p>}
       <div class="btns">
         <button class="btn sm" type="submit" disabled={busy}>{t('note.save')}</button>
         <button class="btn ghost sm" type="button" onClick={() => { setOpen(false); onDone?.() }}>{t('note.cancel')}</button>

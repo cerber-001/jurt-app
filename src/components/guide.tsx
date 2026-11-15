@@ -4,7 +4,7 @@ import { useSignal } from '@preact/signals'
 import { content, contentError, loadContent, type Dua, type Step, type Zikr } from '../lib/content'
 import { done, ls, toggleDone } from '../lib/store'
 import { Card, Html, Icon } from './ui'
-import { pick } from '../lib/i18n'
+import { pick, t, tf } from '../lib/i18n'
 import { Notes } from './notes'
 
 type Mode = 'first' | 'again' | 'mecca'
@@ -29,10 +29,10 @@ export function ModePicker({ mode, set }: { mode: Mode; set: (m: Mode) => void }
   return (
     <Card>
       <div class="modeq">
-        <div class="kicker">Какая у вас умра?</div>
+        <div class="kicker">{t('path.kind')}?</div>
         <div class="btns">
           {c.modes.kinds.map(k => (
-            <button key={k.id} class={'btn ghost' + (mode === k.id ? ' sel' : '')} onClick={() => set(k.id)}>
+            <button key={k.id} class={'btn ghost' + (mode === k.id ? ' sel' : '')} aria-pressed={mode === k.id} onClick={() => set(k.id)}>
               {k.title}<small>{k.hint}</small>
             </button>
           ))}
@@ -51,16 +51,18 @@ export function StepCard({ s, mode, canCheck }: { s: Step; mode: Mode; canCheck:
   const kick = s.kicker ? (mode === 'mecca' ? s.kicker.mecca || s.kicker.first : s.kicker.first || s.kicker.mecca) : ''
   return (
     <section class={'acc step' + (open ? ' open' : '') + (isDone ? ' done' : '')} data-id={s.id}>
-      <div class="acc-h" onClick={() => setOpen(!open)} role="button" aria-expanded={open}>
-        <div class="num"><Icon id={s.icon} size={26} /><i>{s.num}</i></div>
-        <div class="st">
-          {kick && <div class="kicker">{kick}</div>}
-          <b>{s.title}</b>
-        </div>
+      <div class="acc-h">
+        <button type="button" class="acc-t" onClick={() => setOpen(!open)} aria-expanded={open}>
+          <span class="num"><Icon id={s.icon} size={26} /><i>{s.num}</i></span>
+          <span class="st">
+            {kick && <span class="kicker">{kick}</span>}
+            <b>{s.title}</b>
+          </span>
+        </button>
         {canCheck && (
-          <button class="chk" aria-label={isDone ? 'Снять отметку' : 'Отметить выполненным'}
-            onClick={e => { e.stopPropagation(); toggleDone(s.id) }}>
-            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2.5" /></svg>
+          <button type="button" class="chk" aria-pressed={isDone} aria-label={t('path.check') + ': ' + s.title}
+            onClick={() => toggleDone(s.id)}>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 12l5 5L20 7" fill="none" stroke="currentColor" stroke-width="2.5" /></svg>
           </button>
         )}
       </div>
@@ -68,7 +70,7 @@ export function StepCard({ s, mode, canCheck }: { s: Step; mode: Mode; canCheck:
         <div class="acc-b"><div class="acc-wrap"><div class="acc-in">
           <Html html={s.html} />
           <Notes id={'step:' + s.id} />
-          {canCheck && <button class="donebtn" onClick={() => toggleDone(s.id)}>{isDone ? 'Выполнено ✓' : 'Выполнил(а)'}</button>}
+          {canCheck && <button class="donebtn" onClick={() => toggleDone(s.id)}>{isDone ? t('step.done') : t('step.idid')}</button>}
         </div></div></div>
       )}
     </section>
@@ -77,14 +79,14 @@ export function StepCard({ s, mode, canCheck }: { s: Step; mode: Mode; canCheck:
 
 export function Steps({ mode, canCheck }: { mode: Mode; canCheck: boolean }) {
   const c = useContent()
-  if (contentError.value) return <p class="err">{contentError.value}</p>
+  if (contentError.value) return <p class="err" role="alert">{contentError.value}</p>
   if (!c) return <Card><div class="sk" /></Card>
   const howto = c.info.find(i => i.id === 'howto')
   const bans = c.info.find(i => i.id === 'ihram-bans')
   const total = c.steps.length, n = c.steps.filter(s => done.value[s.id]).length
   return (
     <>
-      {canCheck && <p class="muted" style="margin:.2rem 0 .6rem">Выполнено {n} из {total}</p>}
+      {canCheck && <p class="muted" style="margin:.2rem 0 .6rem">{tf('step.count', { n, m: total })}</p>}
       {howto && <details class="acc info blue"><summary class="acc-h"><div class="num"><Icon id={howto.icon} size={26} /></div><div class="st"><b>{howto.title}</b></div></summary><div class="acc-in"><Html html={howto.html} /></div></details>}
       {c.steps.map(s => (
         <>
@@ -102,10 +104,10 @@ export function DuaCard({ d }: { d: Dua }) {
   const [open, setOpen] = useState(false)
   return (
     <section class={'acc dq' + (open ? ' open' : '')}>
-      <div class="acc-h" onClick={() => setOpen(!open)} role="button" aria-expanded={open}>
-        <div class="ico"><Icon id={d.icon} size={24} /></div>
-        <div class="st"><b>{d.title}</b>{!open && <span class="pv">{d.preview}</span>}</div>
-      </div>
+      <button type="button" class="acc-h acc-t" onClick={() => setOpen(!open)} aria-expanded={open}>
+        <span class="ico"><Icon id={d.icon} size={24} /></span>
+        <span class="st"><b>{d.title}</b>{!open && <span class="pv">{d.preview}</span>}</span>
+      </button>
       {open && <div class="acc-b"><div class="acc-wrap"><div class="acc-in"><Html html={d.html} /><Notes id={'dua:' + d.id} /></div></div></div>}
     </section>
   )
@@ -118,11 +120,11 @@ export function DuaList({ extra }: { extra?: { when: string; title: string; ar: 
     <>
       {extra && extra.length > 0 && (
         <Card cls="sand">
-          <h3>От наставника группы</h3>
+          <h2 class="as-h3">{t('dua.mentor')}</h2>
           {extra.map((e, i) => (
             <div class="dua" key={i}>
               <div class="lbl">{e.when} · {e.title}</div>
-              {e.ar && <div class="ar" dir="rtl">{e.ar}</div>}
+              {e.ar && <div class="ar" dir="rtl" lang="ar">{e.ar}</div>}
               {e.tr && <div class="tr">{e.tr}</div>}
               {e.ru && <div class="ru">{e.ru}</div>}
               {e.src && <div class="src">{e.src}</div>}
@@ -145,7 +147,7 @@ export function ZikrList() {
           <h2>{pick(z.n)}{z.goal ? <span class="pill">{z.goal}×</span> : null}</h2>
           {(z.ph ?? [{ ar: String(z.ar ?? ''), tr: String(z.tr ?? ''), ru: String(z.ru ?? '') }]).map((p, i) => (
             <div class="ph" key={i}>
-              <div class="ar" dir="rtl">{p.ar}</div>
+              <div class="ar" dir="rtl" lang="ar">{p.ar}</div>
               <div class="tr">{p.tr}</div>
               <div class="ru">{p.ru}</div>
             </div>
@@ -168,9 +170,10 @@ function ZikrTap({ id, goal }: { id: string; goal: number }) {
   const tap = () => { const v = n + 1; navigator.vibrate?.(v % goal === 0 ? [70, 50, 140] : 25); put(v) }
   return (
     <div class="crow zktap">
-      <button class="zkbtn" onClick={tap} aria-label="Плюс один">{n}<small>/{goal}</small></button>
-      <button onClick={() => put(Math.max(0, n - 1))} disabled={!n}>− 1</button>
-      <button onClick={() => put(0)} disabled={!n}>0</button>
+      <button class="zkbtn" onClick={tap} aria-label={`${t('zk.plus')} · ${n} / ${goal}`}>{n}<small>/{goal}</small></button>
+      <button onClick={() => put(Math.max(0, n - 1))} disabled={!n} aria-label={'− 1, ' + t('zk.minus')}>− 1</button>
+      <button onClick={() => put(0)} disabled={!n} aria-label={'0, ' + t('zk.zero')}>0</button>
+      <span class="sr-only" aria-live="polite" aria-atomic="true">{n} / {goal}</span>
     </div>
   )
 }

@@ -1,0 +1,297 @@
+[
+ {
+  "id": "ghusl",
+  "num": 1,
+  "icon": "b-ghusl",
+  "kicker": {
+   "first": "Ghusl · Madinah · 01.11 · at the hotel",
+   "mecca": "Ghusl · Makkah · at the hotel"
+  },
+  "title": "Preparing for Umrah",
+  "tags": [
+   {
+    "kind": "sunna",
+    "text": "Sunnah"
+   }
+  ],
+  "lead": "A full bath before ihram — for cleanliness, not to remove ritual impurity.",
+  "dua": [],
+  "html": "<div class=\"tags\"><span class=\"tag sunna\">Sunnah</span></div>\n <p class=\"lead\">A full bath before ihram — for cleanliness, not to remove ritual impurity.</p>\n <ul class=\"do\">\n  <li class=\"s\"><span class=\"not-mecca\">The day before (31.10)</span><span class=\"only-mecca\">Before you leave</span>: trim your nails and moustache, remove the hair under the arms and in the groin area.</li>\n  <li class=\"s\">Do ghusl: rinse the mouth, rinse the nose, wash the whole body.</li>\n  <li class=\"s\">Put perfume <b>on your body</b> (not on the ihram cloth).</li>\n </ul>\n <div class=\"note keep not-mecca\"><b>Men:</b> if after Umrah you want only to shorten your hair (taqsir), do not cut it short before the trip. The hair must be longer than a finger joint (≈ 2 cm), otherwise only shaving is possible (step 11).</div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>if ghusl is not possible</small></summary><div class=\"det-in\">\n <ul class=\"do\">\n  <li>If ghusl is not possible, ordinary ablution (wudu) is enough.</li>\n </ul>\n </div></details>"
+ },
+ {
+  "id": "ihram",
+  "num": 2,
+  "icon": "b-ihram",
+  "kicker": {
+   "first": "Madinah · 01.11 · before the miqat",
+   "mecca": "Makkah · at the hotel"
+  },
+  "title": "Ihram clothing",
+  "tags": [
+   {
+    "kind": "must",
+    "text": "Wajib · no sewn clothing, before the miqat"
+   },
+   {
+    "kind": "sunna",
+    "text": "Sunnah · 2 white sheets"
+   }
+  ],
+  "lead": "The ihram itself is the intention and the talbiyah (steps 4–5). From this moment a man may not wear sewn clothing, and you must enter ihram before the miqat of Dhul-Hulayfah (for an Umrah from Makkah — outside the Haram boundary; the closest place is Tan'im, Masjid Aisha) — this is wajib. Two white unsewn sheets are sunnah: this was the dress of the Prophet ﷺ.",
+  "dua": [],
+  "html": "<div class=\"tags\"><span class=\"tag must\">Wajib · <i>no sewn clothing, before the miqat</i></span><span class=\"tag sunna\">Sunnah · <i>2 white sheets</i></span></div>\n <p class=\"lead\">The ihram itself is the intention and the talbiyah (steps 4–5). From this moment a man <b>may not wear sewn clothing</b>, and you must enter ihram <span class=\"not-mecca\"><b>before</b> the miqat of Dhul-Hulayfah</span><span class=\"only-mecca\"><b>outside the Haram boundary</b> — the closest place is Tan'im (Masjid Aisha)</span> — this is wajib. Two white unsewn sheets are sunnah: this was the dress of the Prophet <span class=\"saw\">ﷺ</span>.</p>\n <div class=\"note\"><b>“Can I skip it and pay with a sacrifice instead?” — No.</b> A wajib is obligatory. A dam sacrifice repairs the Umrah if a violation has already happened, but it does not make the violation allowed: breaking a wajib on purpose is a sin, and repentance is also needed. Expiation is for a mistake, an illness or a forced reason, not a payment in advance.</div>\n <ul class=\"do\">\n  <li><b>Izar</b> — the lower sheet, wrapped around the waist, covers from the navel to below the knees.</li>\n  <li><b>Rida</b> — the upper sheet, over the shoulders.</li>\n  <li>Sandals that leave the top of the foot uncovered. A money belt is allowed.</li>\n  <li class=\"no\">Underwear, socks, a cap, sewn clothing.</li>\n  <li><b>Women</b> — wear their usual modest clothing; sewn clothes are allowed, any colour. The face stays uncovered: fabric must not touch the face.</li>\n </ul>\n <div class=\"note keep only-mecca\"><b>Another Umrah from Makkah.</b> You put on the ihram clothing at the hotel, then take a taxi to Tan'im (Masjid Aisha, ≈ 7.5 km from the Haram) — there you pray 2 rak'ahs, make the intention and say the talbiyah, then go back to the Haram for tawaf. You do not enter ihram for Umrah inside the Haram boundary — this breaks a wajib. If this has happened, go outside the boundary before you start tawaf and say the talbiyah there; for details, ask a scholar of Hanafi fiqh.</div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>idtiba, where to change</small></summary><div class=\"det-in\">\n <ul class=\"do\">\n  <li class=\"s\">Before tawaf — <b>idtiba</b>: the right shoulder is uncovered, the rida goes under the right arm.</li>\n </ul>\n <div class=\"note\">We put on the clothing at the hotel, but the <b>intention</b> and the <b>talbiyah</b> are made at the miqat (steps 4 and 5). Until then, the prohibitions do not apply yet.</div>\n </div></details>"
+ },
+ {
+  "id": "rakat",
+  "num": 3,
+  "icon": "b-prayer-mat",
+  "kicker": {
+   "first": "Miqat Dhul-Hulayfah",
+   "mecca": "Tan'im · Masjid Aisha"
+  },
+  "title": "2 rak'ahs of ihram",
+  "tags": [
+   {
+    "kind": "sunna",
+    "text": "Sunnah"
+   }
+  ],
+  "lead": "Two rak'ahs with the intention “prayer of ihram”. Ihram has not started yet — you may cover your head.",
+  "dua": [
+   {
+    "label": "1st rak'ah, after al-Fatihah",
+    "ar": "قُلْ يَـٰٓأَيُّهَا ٱلْكَـٰفِرُونَ",
+    "tr": "Surah al-Kafirun (109)"
+   },
+   {
+    "label": "2nd rak'ah, after al-Fatihah",
+    "ar": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+    "tr": "Surah al-Ikhlas (112)"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag sunna\">Sunnah</span></div>\n <p class=\"lead\">Two rak'ahs with the intention “prayer of ihram”. Ihram has not started yet — you may cover your head.</p>\n <div class=\"dua\">\n  <div class=\"lbl\">1st rak'ah, after al-Fatihah</div>\n  <div class=\"ar\">قُلْ يَـٰٓأَيُّهَا ٱلْكَـٰفِرُونَ</div>\n  <div class=\"tr\">Surah al-Kafirun (109)</div>\n </div>\n <div class=\"dua\">\n  <div class=\"lbl\">2nd rak'ah, after al-Fatihah</div>\n  <div class=\"ar\">قُلْ هُوَ ٱللَّهُ أَحَدٌ</div>\n  <div class=\"tr\">Surah al-Ikhlas (112)</div>\n </div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>prayer times</small></summary><div class=\"det-in\">\n <ul class=\"do\">\n  <li>If it is the time of a fard prayer (zuhr), you may pray zuhr instead of them.</li>\n  <li><b>When you may not pray:</b> while the sun is rising (≈20 min after sunrise), at the zenith (≈10 min before zuhr), while the sun is setting (≈20 min before maghrib). It is also undesirable after fajr until sunrise and after asr until sunset. Wait, then pray. Prayer times for your location and the qibla are <button class=\"linkbtn\" type=\"button\" data-go=\"home\" data-anchor=\"prCard\">on “Home”</button>.</li>\n </ul>\n </div></details>"
+ },
+ {
+  "id": "niyya",
+  "num": 4,
+  "icon": "b-dua",
+  "kicker": {
+   "first": "Miqat · after 2 rak'ahs",
+   "mecca": "Tan'im · after 2 rak'ahs"
+  },
+  "title": "Intention",
+  "tags": [
+   {
+    "kind": "fard",
+    "text": "Fard · shart (condition)"
+   }
+  ],
+  "lead": "The intention is in the heart. Saying it aloud is recommended.",
+  "dua": [
+   {
+    "label": "Intention for Umrah",
+    "ar": "اللَّهُمَّ إِنِّي أُرِيدُ الْعُمْرَةَ فَيَسِّرْهَا لِي وَتَقَبَّلْهَا مِنِّي",
+    "tr": "Allahumma inni uridul-'umrata fa-yassirha li wa taqabbalha minni",
+    "ru": "“O Allah, I intend to perform Umrah — make it easy for me and accept it from me”",
+    "src": "A formula from Hanafi fiqh books (al-Hidayah and others)"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag fard\">Fard · <i>shart (condition)</i></span></div>\n <p class=\"lead\">The intention is in the heart. Saying it aloud is recommended.</p>\n <div class=\"dua\">\n  <div class=\"lbl\">Intention for Umrah</div>\n  <div class=\"ar big\">اللَّهُمَّ إِنِّي أُرِيدُ الْعُمْرَةَ فَيَسِّرْهَا لِي وَتَقَبَّلْهَا مِنِّي</div>\n  <div class=\"tr\">Allahumma inni uridul-'umrata fa-yassirha li wa taqabbalha minni</div>\n  <div class=\"ru\">“O Allah, I intend to perform Umrah — make it easy for me and accept it from me”</div>\n  <div class=\"src\">A formula from Hanafi fiqh books (al-Hidayah and others)</div>\n </div>\n <div class=\"note\">Right after the intention — <b>talbiyah</b> (step 5). From this moment you are in ihram and the prohibitions apply (see the “Ihram prohibitions” card below).</div>"
+ },
+ {
+  "id": "talbiya",
+  "num": 5,
+  "icon": "b-pilgrim",
+  "kicker": {
+   "first": "Miqat → Makkah · all the way",
+   "mecca": "Tan'im → Haram · all the way"
+  },
+  "title": "Talbiyah",
+  "tags": [
+   {
+    "kind": "fard",
+    "text": "Fard · once, with the intention"
+   },
+   {
+    "kind": "sunna",
+    "text": "Sunnah · repeat it"
+   }
+  ],
+  "lead": "",
+  "dua": [
+   {
+    "ar": "لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ",
+    "tr": "Labbayk Allahumma labbayk. Labbayka la sharika laka labbayk. Innal-hamda wan-ni'mata laka wal-mulk. La sharika lak.",
+    "ru": "“Here I am before You, O Allah, here I am! Here I am, You have no partner, here I am! Truly, praise, grace and dominion are Yours. You have no partner”.",
+    "src": "al-Bukhari 1549, Muslim 1184"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag fard\">Fard · <i>once, with the intention</i></span><span class=\"tag sunna\">Sunnah · <i>repeat it</i></span></div>\n <div class=\"dua\">\n  <div class=\"ar big\">لَبَّيْكَ اللَّهُمَّ لَبَّيْكَ، لَبَّيْكَ لَا شَرِيكَ لَكَ لَبَّيْكَ، إِنَّ الْحَمْدَ وَالنِّعْمَةَ لَكَ وَالْمُلْكَ، لَا شَرِيكَ لَكَ</div>\n  <div class=\"tr\">Labbayk Allahumma labbayk. Labbayka la sharika laka labbayk. Innal-hamda wan-ni'mata laka wal-mulk. La sharika lak.</div>\n  <div class=\"ru\">“Here I am before You, O Allah, here I am! Here I am, You have no partner, here I am! Truly, praise, grace and dominion are Yours. You have no partner”.</div>\n  <div class=\"src\">al-Bukhari 1549, Muslim 1184</div>\n </div>\n <ul class=\"do\">\n  <li>Men say it aloud, loudly. Repeat it on the way, when going up and when going down.</li>\n  <li>You stop it at the <b>start of tawaf</b> (at the Black Stone).</li>\n </ul>"
+ },
+ {
+  "id": "enter",
+  "num": 6,
+  "icon": "b-city-gate",
+  "kicker": {
+   "first": "Makkah · al-Masjid al-Haram",
+   "mecca": "Makkah · al-Masjid al-Haram"
+  },
+  "title": "Entering the mosque",
+  "tags": [
+   {
+    "kind": "sunna",
+    "text": "Sunnah"
+   }
+  ],
+  "lead": "",
+  "dua": [
+   {
+    "ar": "بِسْمِ اللَّهِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللَّهِ، اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+    "tr": "Bismillah, was-salatu was-salamu 'ala rasulillah. Allahummaftah li abwaba rahmatik.",
+    "ru": "“In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, open for me the gates of Your mercy”.",
+    "src": "Muslim 713; Abu Dawud 465"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag sunna\">Sunnah</span></div>\n <ul class=\"do\">\n  <li><b>Meeting point</b>: remember the gate number and take a photo of it.</li>\n  <li>Shoes — in a bag, then in your backpack.</li>\n  <li class=\"s\">Enter with your <b>right</b> foot and read:</li>\n </ul>\n <div class=\"dua\">\n  <div class=\"ar\">بِسْمِ اللَّهِ، وَالصَّلَاةُ وَالسَّلَامُ عَلَى رَسُولِ اللَّهِ، اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ</div>\n  <div class=\"tr\">Bismillah, was-salatu was-salamu 'ala rasulillah. Allahummaftah li abwaba rahmatik.</div>\n  <div class=\"ru\">“In the name of Allah, peace and blessings be upon the Messenger of Allah. O Allah, open for me the gates of Your mercy”.</div>\n  <div class=\"src\">Muslim 713; Abu Dawud 465</div>\n </div>\n <div class=\"note\"><b>First sight of the Kaaba</b> — raise your hands, say “Allahu akbar, la ilaha illallah” and ask Allah for what matters most to you.</div>\n <button class=\"mygo\" data-go=\"dua\" data-seg=\"mine\"><svg><use href=\"#i-heart\"/></svg><span><b>My du'as</b><small>for what matters most</small></span></button>"
+ },
+ {
+  "id": "tawaf",
+  "num": 7,
+  "icon": "b-tawaf",
+  "kicker": {
+   "first": "Mataf · 7 rounds",
+   "mecca": "Mataf · 7 rounds"
+  },
+  "title": "Tawaf",
+  "tags": [
+   {
+    "kind": "fard",
+    "text": "Fard · 4 rounds"
+   },
+   {
+    "kind": "must",
+    "text": "Wajib · 3 rounds, wudu"
+   },
+   {
+    "kind": "sunna",
+    "text": "Sunnah"
+   }
+  ],
+  "lead": "At the Black Stone, stand facing it, raise your hands with the palms facing the Stone, say “Bismillahi wallahu akbar” and kiss the inside of your palms. Do this at the start of each of the 7 rounds and after the 7th (8 times in total); you can keep walking without stopping. Do not push your way to the Stone.",
+  "dua": [
+   {
+    "label": "At the Black Stone · at the start of each round",
+    "ar": "بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ",
+    "tr": "Bismillahi wallahu akbar",
+    "ru": "“In the name of Allah, Allah is Great”",
+    "src": "al-Bukhari 1613 (takbir); al-Bayhaqi — from Ibn Umar"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag fard\">Fard · <i>4 rounds</i></span><span class=\"tag must\">Wajib · <i>3 rounds, wudu</i></span></div>\n <ul class=\"do\">\n  <li>It must be done <b>with ablution</b> (wudu).</li>\n  <li class=\"s\">Idtiba — the right shoulder is uncovered for all 7 rounds.</li>\n  <li class=\"s\">Ramal — in the first 3 rounds, walk fast with your shoulders forward (if the crowd allows).</li>\n </ul>\n <div class=\"tw-sch\"><svg viewBox=\"0 0 200 200\" role=\"img\" aria-label=\"Tawaf diagram: start opposite the Black Stone, the Kaaba on your left, 7 rounds anticlockwise\"><defs><marker id=\"tw-ah\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"4.5\" markerHeight=\"4.5\" orient=\"auto\"><path class=\"tw-mk\" d=\"M0 0L10 5L0 10z\"/></marker><marker id=\"tw-aho\" viewBox=\"0 0 10 10\" refX=\"5\" refY=\"5\" markerWidth=\"4.5\" markerHeight=\"4.5\" orient=\"auto\"><path class=\"tw-mko\" d=\"M0 0L10 5L0 10z\"/></marker></defs><circle class=\"tw-mataf\" cx=\"100\" cy=\"100\" r=\"92\"/><path class=\"tw-run\" d=\"M155.45 92.21A56 56 0 0 0 109.72 44.85\" marker-end=\"url(#tw-ah)\"/><path class=\"tw-run\" d=\"M92.21 44.55A56 56 0 0 0 44.85 90.28\" marker-end=\"url(#tw-ah)\"/><path class=\"tw-run\" d=\"M44.55 107.79A56 56 0 0 0 90.28 155.15\" marker-end=\"url(#tw-ah)\"/><path class=\"tw-rab\" d=\"M107.79 155.45A56 56 0 0 0 155.45 107.79\" marker-end=\"url(#tw-aho)\"/><path class=\"tw-start\" d=\"M128 100H186\"/><g transform=\"translate(190 100)\"><circle class=\"tw-halo\" r=\"3\"><animate attributeName=\"r\" values=\"3;13.2\" keyTimes=\"0;1\" calcMode=\"spline\" keySplines=\"0 0 .58 1\" dur=\"2s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\".7;0\" keyTimes=\"0;1\" calcMode=\"spline\" keySplines=\"0 0 .58 1\" dur=\"2s\" repeatCount=\"indefinite\"/></circle></g><circle class=\"tw-lamp\" cx=\"190\" cy=\"100\" r=\"3\"/><path class=\"tw-hijr\" d=\"M102 73A20.5 20.5 0 0 0 73 102\"/><rect class=\"tw-kb\" x=\"83\" y=\"83\" width=\"34\" height=\"34\" transform=\"rotate(45 100 100)\"/><circle class=\"tw-stone\" cx=\"124\" cy=\"100\" r=\"3.6\"/><circle class=\"tw-yem\" cx=\"100\" cy=\"124\" r=\"2.6\"/><g transform=\"translate(100 100)\"><g class=\"tw-orbit\"><circle class=\"tw-trail\" cx=\"54.34\" cy=\"13.55\" r=\"2.6\" opacity=\".35\"/><circle class=\"tw-trail\" cx=\"55.58\" cy=\"6.82\" r=\"3.6\" opacity=\".6\"/><circle class=\"orb\" cx=\"56\" cy=\"0\" r=\"5\"/><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0\" to=\"-360\" dur=\"9s\" repeatCount=\"indefinite\"/></g></g><path class=\"tw-lead\" d=\"M52 52L70 70\"/><g class=\"tw-n\"><circle cx=\"172\" cy=\"86\" r=\"7\"/><text x=\"172\" y=\"89\">1</text></g><g class=\"tw-n\"><circle cx=\"150\" cy=\"50\" r=\"7\"/><text x=\"150\" y=\"53\">2</text></g><g class=\"tw-n\"><circle cx=\"47\" cy=\"47\" r=\"7\"/><text x=\"47\" y=\"50\">3</text></g><g class=\"tw-n\"><circle cx=\"100\" cy=\"140\" r=\"7\"/><text x=\"100\" y=\"143\">4</text></g><g class=\"tw-n\"><circle cx=\"149.5\" cy=\"149.5\" r=\"7\"/><text x=\"149.5\" y=\"152.5\">5</text></g></svg><ol class=\"lgd\"><li><span>1</span><div>Start — <b>opposite the Black Stone</b> (green lamp on the wall).</div></li><li><span>2</span><div><b>The Kaaba is on your left</b>, walk anticlockwise.</div></li><li><span>3</span><div>Walk <b>outside</b> the Hijr of Ismail (the semicircular wall).</div></li><li><span>4</span><div>Yemeni Corner — touch it with your hand if there is space (do not kiss it).</div></li><li><span>5</span><div>Between the Yemeni Corner and the Black Stone — the du'a “Our Lord! Give us good…” (below).</div></li></ol><p class=\"cap\">A guiding diagram, not to scale.</p></div>\n <div class=\"counter\" data-id=\"tawaf\" data-unit=\"round\" data-plural=\"rounds\" data-hint-1=\"round 1 · from the Black Stone\" data-hint-2=\"round 2\" data-hint-3=\"round 3 · last one with ramal\" data-hint-4=\"round 4\" data-hint-5=\"round 5\" data-hint-6=\"round 6\" data-hint-7=\"round 7 · the last one\"><div class=\"ctitle\"><span>Round counter</span></div><button class=\"ringbtn\" aria-label=\"Mark a round\"><svg viewBox=\"0 0 128 128\"><circle class=\"bg\" cx=\"64\" cy=\"64\" r=\"58\"/><circle class=\"fg\" cx=\"64\" cy=\"64\" r=\"58\" stroke-dasharray=\"364.4\" stroke-dashoffset=\"364.4\"/><line class=\"seg\" x1=\"116.0\" y1=\"64.0\" x2=\"130.0\" y2=\"64.0\"/><line class=\"seg\" x1=\"96.4\" y1=\"104.7\" x2=\"105.2\" y2=\"115.6\"/><line class=\"seg\" x1=\"52.4\" y1=\"114.7\" x2=\"49.3\" y2=\"128.3\"/><line class=\"seg\" x1=\"17.1\" y1=\"86.6\" x2=\"4.5\" y2=\"92.6\"/><line class=\"seg\" x1=\"17.1\" y1=\"41.4\" x2=\"4.5\" y2=\"35.4\"/><line class=\"seg\" x1=\"52.4\" y1=\"13.3\" x2=\"49.3\" y2=\"-0.3\"/><line class=\"seg\" x1=\"96.4\" y1=\"23.3\" x2=\"105.2\" y2=\"12.4\"/></svg><span class=\"core\"><span class=\"n\">0<small>/7</small></span><span class=\"lab\"></span><span class=\"tap\"></span></span></button><div class=\"dots7\"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div><div class=\"crow\"><button class=\"minus\">− undo</button><button class=\"zero\">Start over</button></div></div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>lost count, wheelchair</small></summary><div class=\"det-in\">\n <p class=\"small\">Lost count? Take the smaller number. Yemeni Corner — touch it with your hand if there is space (do not kiss it). On the way — any du'a, dhikr, Quran.</p>\n <div class=\"note\">Start each round exactly at the line of the Black Stone — this is the safest way. If walking is hard for you (age, illness, after surgery), tawaf in a wheelchair is allowed for a valid reason.</div>\n </div></details>\n<h3>Istilam and du'a</h3>\n <div class=\"tags\"><span class=\"tag sunna\">Sunnah</span></div>\n <p class=\"lead\">At the Black Stone, stand facing it, raise your hands <b>with the palms facing the Stone</b>, say “Bismillahi wallahu akbar” and kiss the inside of your palms. Do this <b>at the start of each of the 7 rounds and after the 7th</b> (8 times in total); you can keep walking without stopping. <b>Do not push your way</b> to the Stone.</p>\n <div class=\"dua\">\n  <div class=\"lbl\">At the Black Stone · at the start of each round</div>\n  <div class=\"ar big\">بِسْمِ اللَّهِ وَاللَّهُ أَكْبَرُ</div>\n  <div class=\"tr\">Bismillahi wallahu akbar</div>\n  <div class=\"ru\">“In the name of Allah, Allah is Great”</div>\n  <div class=\"src\">al-Bukhari 1613 (takbir); al-Bayhaqi — from Ibn Umar</div>\n </div>\n <div class=\"dua sm\">\n  <div class=\"lbl\">Between the Yemeni Corner and the Black Stone</div>\n  <div class=\"ar\">رَبَّنَآ ءَاتِنَا فِى ٱلدُّنْيَا حَسَنَةً وَفِى ٱلْـَٔاخِرَةِ حَسَنَةً وَقِنَا عَذَابَ ٱلنَّارِ</div>\n  <div class=\"tr\">Rabbana atina fid-dunya hasanah, wa fil-akhirati hasanah, wa qina 'adhaban-nar</div>\n  <div class=\"ru\">“Our Lord! Give us good in this world and good in the Last Life, and protect us from the torment of the Fire”</div>\n  <div class=\"src\">Quran 2:201 (translation of the meaning); Abu Dawud 1892</div>\n </div>\n <button class=\"mygo\" data-go=\"dua\" data-seg=\"mine\"><svg><use href=\"#i-heart\"/></svg><span><b>My du'as</b><small>your own du'as — read them on the way</small></span></button>"
+ },
+ {
+  "id": "maqam",
+  "num": 8,
+  "icon": "b-mihrab",
+  "kicker": {
+   "first": "After the 7th round",
+   "mecca": "After the 7th round"
+  },
+  "title": "2 rak'ahs at Maqam Ibrahim",
+  "tags": [
+   {
+    "kind": "must",
+    "text": "Wajib"
+   }
+  ],
+  "lead": "",
+  "dua": [
+   {
+    "ar": "وَٱتَّخِذُوا۟ مِن مَّقَامِ إِبْرَٰهِـۧمَ مُصَلًّى",
+    "tr": "Wattakhidhu mim-maqami Ibrahima musalla",
+    "ru": "“Make the place of Ibrahim a place of prayer”",
+    "src": "Quran 2:125 (translation of the meaning)"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag must\">Wajib</span></div>\n <ul class=\"do\">\n  <li>Cover your right shoulder (idtiba is over).</li>\n  <li>On the way to the Maqam, you may read:</li>\n </ul>\n <div class=\"dua\">\n  <div class=\"ar\">وَٱتَّخِذُوا۟ مِن مَّقَامِ إِبْرَٰهِـۧمَ مُصَلًّى</div>\n  <div class=\"tr\">Wattakhidhu mim-maqami Ibrahima musalla</div>\n  <div class=\"ru\">“Make the place of Ibrahim a place of prayer”</div>\n  <div class=\"src\">Quran 2:125 (translation of the meaning)</div>\n </div>\n <ul class=\"do\">\n  <li>2 rak'ahs: al-Kafirun and al-Ikhlas, as in step 3.</li>\n  <li><b>Crowded? Pray anywhere in the mosque</b> — this is even better than getting in the way of people doing tawaf.</li>\n  <li>At an undesirable time (sunrise, zenith, sunset, after fajr and after asr), wait and pray later.</li>\n </ul>"
+ },
+ {
+  "id": "zamzam",
+  "num": 9,
+  "icon": "b-zamzam",
+  "kicker": {
+   "first": "Coolers along the edge of the mataf",
+   "mecca": "Coolers along the edge of the mataf"
+  },
+  "title": "Zamzam",
+  "tags": [
+   {
+    "kind": "mus",
+    "text": "Mustahabb"
+   }
+  ],
+  "lead": "",
+  "dua": [
+   {
+    "ar": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا وَاسِعًا، وَشِفَاءً مِنْ كُلِّ دَاءٍ",
+    "tr": "Allahumma inni as'aluka 'ilman nafi'an, wa rizqan wasi'an, wa shifa'an min kulli da'",
+    "ru": "“O Allah, I ask You for beneficial knowledge, abundant provision and healing from every illness”",
+    "src": "Words of Ibn Abbas (ad-Daraqutni)"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag mus\">Mustahabb</span></div>\n <ul class=\"do\">\n  <li class=\"s\"><b>Drink standing</b>, facing the Kaaba, as much as you like, in three sips, starting with “Bismillah”. The Prophet <span class=\"saw\">ﷺ</span> drank Zamzam standing (al-Bukhari 1637).</li>\n  <li class=\"s\">A little water — on your head and face.</li>\n  <li class=\"s\">Ask for what you need: “Zamzam water is for whatever it is drunk for” <span class=\"small\">(Ibn Majah 3062)</span>.</li>\n </ul>\n <div class=\"dua\">\n  <div class=\"ar\">اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا وَاسِعًا، وَشِفَاءً مِنْ كُلِّ دَاءٍ</div>\n  <div class=\"tr\">Allahumma inni as'aluka 'ilman nafi'an, wa rizqan wasi'an, wa shifa'an min kulli da'</div>\n  <div class=\"ru\">“O Allah, I ask You for beneficial knowledge, abundant provision and healing from every illness”</div>\n  <div class=\"src\">Words of Ibn Abbas (ad-Daraqutni)</div>\n </div>\n <button class=\"mygo\" data-go=\"dua\" data-seg=\"mine\"><svg><use href=\"#i-heart\"/></svg><span><b>My du'as</b><small>what to ask for</small></span></button>\n <div class=\"note\">Then go back to the Black Stone: istilam with your hand from a distance, then on to Safa (sunnah).</div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>about the du'a of Ibn Abbas</small></summary><div class=\"det-in\">\n <div class=\"flag\"><b>⚑ To check:</b> the du'a of Ibn Abbas has a weak isnad; read it as an ordinary du'a.</div>\n </div></details>"
+ },
+ {
+  "id": "sai",
+  "num": 10,
+  "icon": "b-sai",
+  "kicker": {
+   "first": "Starting on the hill of Safa",
+   "mecca": "Starting on the hill of Safa"
+  },
+  "title": "Sa'i: Safa",
+  "tags": [
+   {
+    "kind": "must",
+    "text": "Wajib"
+   }
+  ],
+  "lead": "",
+  "dua": [
+   {
+    "label": "Between the green lights",
+    "ar": "رَبِّ اغْفِرْ وَارْحَمْ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ",
+    "tr": "Rabbighfir warham, innaka antal-a'azzul-akram",
+    "ru": "“My Lord, forgive and have mercy, for You are the Most Mighty, the Most Generous”",
+    "src": "Words of Ibn Mas'ud and Ibn Umar (Ibn Abi Shaybah)"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag must\">Wajib</span></div>\n <div class=\"dua sm\">\n  <div class=\"lbl\">Approaching Safa (once)</div>\n  <div class=\"ar\">إِنَّ ٱلصَّفَا وَٱلْمَرْوَةَ مِن شَعَآئِرِ ٱللَّهِ · أَبْدَأُ بِمَا بَدَأَ اللَّهُ بِهِ</div>\n  <div class=\"tr\">Innas-safa wal-marwata min sha'a'irillah. Abda'u bima bada'allahu bih.</div>\n  <div class=\"ru\">“As-Safa and al-Marwah are among the rite-signs of Allah”. “I begin with what Allah began with”.</div>\n  <div class=\"src\">Quran 2:158 (translation of the meaning); Muslim 1218</div>\n </div>\n <div class=\"dua sm\">\n  <div class=\"lbl\">On Safa and on Marwah · facing the Kaaba, hands raised</div>\n  <div class=\"ar\">اللَّهُ أَكْبَرُ ×٣ · لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ، أَنْجَزَ وَعْدَهُ، وَنَصَرَ عَبْدَهُ، وَهَزَمَ الْأَحْزَابَ وَحْدَهُ</div>\n  <div class=\"tr\">Allahu akbar ×3. La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamd, wa huwa 'ala kulli shay'in qadir. La ilaha illallahu wahdah, anjaza wa'dah, wa nasara 'abdah, wa hazamal-ahzaba wahdah.</div>\n  <div class=\"src\">Muslim 1218. Then your own du'a.</div>\n </div>\n <button class=\"mygo\" data-go=\"dua\" data-seg=\"mine\"><svg><use href=\"#i-heart\"/></svg><span><b>My du'as</b><small>your own du'a on Safa and Marwah</small></span></button>\n<h3>Sa'i: 7 laps</h3>\n <ul class=\"do\">\n  <li><b>Safa → Marwah = 1</b>, Marwah → Safa = 2 … you finish <b>at Marwah</b> (7).</li>\n  <li class=\"s\">Between the <b>green lights</b> men walk fast.</li>\n </ul>\n<div class=\"sai-sch\" data-dir=\"sm\"><svg viewBox=\"0 0 320 140\" role=\"img\" aria-label=\"Sa'i diagram: 7 laps between Safa and Marwah, fast walking between the green lights, finish at Marwah\"><rect class=\"sai-gz\" x=\"136\" y=\"44\" width=\"48\" height=\"48\" rx=\"4\"/><text class=\"sai-t\" x=\"160\" y=\"32\">green lights</text><path class=\"sai-hill\" d=\"M8 92Q36 40 64 92Z\"/><path class=\"sai-hill\" d=\"M256 92Q284 40 312 92Z\"/><path class=\"sai-ln ln-sm\" d=\"M72 58H244\"/><path class=\"sai-hd ln-sm\" d=\"M236 51L245 58L236 65\"/><path class=\"sai-ln ln-ms\" d=\"M248 78H76\"/><path class=\"sai-hd ln-ms\" d=\"M84 71L75 78L84 85\"/><text class=\"sai-s sai-e\" x=\"110\" y=\"52\">1 · 3 · 5 · 7</text><text class=\"sai-s\" x=\"212\" y=\"94\">2 · 4 · 6</text><g class=\"sai-d d-sm\"><circle cx=\"72\" cy=\"58\" r=\"5\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;64 0;112 0;170 0;170 0\" keyTimes=\"0;.36;.495;.82;1\" dur=\"5s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;.04;.82;1\" dur=\"5s\" repeatCount=\"indefinite\"/></circle></g><g class=\"sai-d d-ms\"><circle cx=\"248\" cy=\"78\" r=\"5\"><animateTransform attributeName=\"transform\" type=\"translate\" values=\"0 0;-64 0;-112 0;-170 0;-170 0\" keyTimes=\"0;.36;.495;.82;1\" dur=\"5s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\"0;1;1;0\" keyTimes=\"0;.04;.82;1\" dur=\"5s\" repeatCount=\"indefinite\"/></circle></g><g class=\"sai-fin\" transform=\"translate(284 66)\"><circle r=\"6.4\"><animate attributeName=\"r\" values=\"6.4;12;6.4\" keyTimes=\"0;.5;1\" calcMode=\"spline\" keySplines=\".42 0 .58 1;.42 0 .58 1\" dur=\"1.6s\" repeatCount=\"indefinite\"/><animate attributeName=\"opacity\" values=\".9;.3;.9\" keyTimes=\"0;.5;1\" calcMode=\"spline\" keySplines=\".42 0 .58 1;.42 0 .58 1\" dur=\"1.6s\" repeatCount=\"indefinite\"/></circle></g><text x=\"36\" y=\"96\"><tspan class=\"sai-h\" x=\"36\" dy=\".95em\">Safa</tspan><tspan class=\"sai-u\" x=\"36\" dy=\"1.4em\">start</tspan></text><text x=\"282\" y=\"96\"><tspan class=\"sai-h\" x=\"282\" dy=\".95em\">Marwah</tspan><tspan class=\"sai-u\" x=\"282\" dy=\"1.4em\">finish (7)</tspan></text></svg><p class=\"cap\">A guiding diagram, not to scale. The dot shows where to go now.</p></div>\n<div class=\"counter\" data-id=\"sai\" data-unit=\"lap\" data-plural=\"laps\" data-hint-1=\"from Safa to Marwah\" data-hint-2=\"from Marwah to Safa\" data-hint-3=\"from Safa to Marwah\" data-hint-4=\"from Marwah to Safa\" data-hint-5=\"from Safa to Marwah\" data-hint-6=\"from Marwah to Safa\" data-hint-7=\"from Safa to Marwah — finish at Marwah\"><div class=\"ctitle\"><span>Lap counter</span></div><button class=\"ringbtn\" aria-label=\"Mark a lap\"><svg viewBox=\"0 0 128 128\"><circle class=\"bg\" cx=\"64\" cy=\"64\" r=\"58\"/><circle class=\"fg\" cx=\"64\" cy=\"64\" r=\"58\" stroke-dasharray=\"364.4\" stroke-dashoffset=\"364.4\"/><line class=\"seg\" x1=\"116.0\" y1=\"64.0\" x2=\"130.0\" y2=\"64.0\"/><line class=\"seg\" x1=\"96.4\" y1=\"104.7\" x2=\"105.2\" y2=\"115.6\"/><line class=\"seg\" x1=\"52.4\" y1=\"114.7\" x2=\"49.3\" y2=\"128.3\"/><line class=\"seg\" x1=\"17.1\" y1=\"86.6\" x2=\"4.5\" y2=\"92.6\"/><line class=\"seg\" x1=\"17.1\" y1=\"41.4\" x2=\"4.5\" y2=\"35.4\"/><line class=\"seg\" x1=\"52.4\" y1=\"13.3\" x2=\"49.3\" y2=\"-0.3\"/><line class=\"seg\" x1=\"96.4\" y1=\"23.3\" x2=\"105.2\" y2=\"12.4\"/></svg><span class=\"core\"><span class=\"n\">0<small>/7</small></span><span class=\"lab\"></span><span class=\"tap\"></span></span></button><div class=\"dots7\"><span>S→M</span><span>M→S</span><span>S→M</span><span>M→S</span><span>S→M</span><span>M→S</span><span>S→M</span></div><div class=\"crow\"><button class=\"minus\">− undo</button><button class=\"zero\">Start over</button></div></div>\n <div class=\"dua\">\n  <div class=\"lbl\">Between the green lights</div>\n  <div class=\"ar\">رَبِّ اغْفِرْ وَارْحَمْ، إِنَّكَ أَنْتَ الْأَعَزُّ الْأَكْرَمُ</div>\n  <div class=\"tr\">Rabbighfir warham, innaka antal-a'azzul-akram</div>\n  <div class=\"ru\">“My Lord, forgive and have mercy, for You are the Most Mighty, the Most Generous”</div>\n  <div class=\"src\">Words of Ibn Mas'ud and Ibn Umar (Ibn Abi Shaybah)</div>\n </div>\n <details class=\"det\"><summary><span class=\"mbtn\">More</span><small>ablution, rest, to check</small></summary><div class=\"det-in\">\n <ul class=\"do\">\n  <li class=\"s\">Ablution is recommended, but not required.</li>\n  <li>Tired? You may rest, sit down, have a drink. Wheelchairs are available.</li>\n </ul>\n <div class=\"flag\"><b>⚑ To check:</b> this du'a is reported from the Companions, not from the Prophet <span class=\"saw\">ﷺ</span>. You may read any du'a.</div>\n </div></details>"
+ },
+ {
+  "id": "halq",
+  "num": 11,
+  "icon": "b-taqsir",
+  "kicker": {
+   "first": "After Marwah",
+   "mecca": "After Marwah"
+  },
+  "title": "Shaving the head",
+  "tags": [
+   {
+    "kind": "must",
+    "text": "Wajib"
+   }
+  ],
+  "lead": "Halq — shaving the whole head (better). Taqsir — shortening the hair by at least the length of a finger joint.",
+  "dua": [
+   {
+    "label": "After Umrah",
+    "ar": "الْحَمْدُ لِلَّهِ",
+    "tr": "Al-hamdu lillah",
+    "ru": "“Praise be to Allah”. May Allah accept our Umrah!"
+   }
+  ],
+  "html": "<div class=\"tags\"><span class=\"tag must\">Wajib</span></div>\n <p class=\"lead\"><b>Halq</b> — shaving the whole head (better). <b>Taqsir</b> — shortening the hair by at least the length of a finger joint.</p>\n <ul class=\"do\">\n  <li>For Hanafis the minimum is <b>a quarter of the head</b>, but the whole head is better.</li>\n  <li>The ihram prohibitions are lifted only after shaving. <b>Umrah is complete!</b></li>\n  <li>Prices at barbers differ and change — ask before they start. A barber who uses a single-use blade is better.</li>\n </ul>\n <div class=\"note keep only-mecca\"><b>Another Umrah on this trip.</b> If your head is already shaved, pass a razor over the whole head again (Hanafis require this). Women again shorten their hair by the length of a finger joint.</div>\n <figure class=\"hairfig keep\">\n  <svg viewBox=\"0 0 330 138\" role=\"img\" aria-label=\"A finger joint is about 2 cm. Long hair can be shortened; hair shorter than a finger joint — shaving only\">\n   <rect class=\"hf-f\" x=\"20\" y=\"10\" width=\"34\" height=\"112\" rx=\"17\"/>\n   <rect class=\"hf-n\" x=\"28\" y=\"15\" width=\"18\" height=\"22\" rx=\"8\"/>\n   <path class=\"hf-l\" d=\"M22 48h30\"/>\n   <path class=\"hf-b\" d=\"M60 10h7v38h-7\"/>\n   <text x=\"72\" y=\"27\">≈ 2 cm</text><text class=\"hf-s\" x=\"72\" y=\"41\">finger joint</text>\n   <rect class=\"hf-h\" x=\"132\" y=\"118\" width=\"70\" height=\"8\" rx=\"4\"/>\n   <path class=\"hf-w\" d=\"M150 118C146 94 158 74 152 52S160 22 156 10M166 118C162 94 174 74 168 52S176 22 172 10M182 118C178 96 188 76 184 54S190 24 188 12\"/>\n   <path class=\"hf-c\" d=\"M136 48h64\"/>\n   <text class=\"hf-o\" x=\"204\" y=\"52\">✂</text>\n   <text x=\"167\" y=\"136\" text-anchor=\"middle\">cut the tips</text>\n   <rect class=\"hf-h\" x=\"244\" y=\"118\" width=\"70\" height=\"8\" rx=\"4\"/>\n   <path class=\"hf-g\" d=\"M240 118v-38\"/>\n   <path class=\"hf-w\" d=\"M262 118c-2-8 2-14 0-22M278 118c-2-8 2-14 0-22M294 118c-2-8 2-14 0-22\"/>\n   <text x=\"279\" y=\"74\" text-anchor=\"middle\" class=\"hf-s\">shorter than a joint</text>\n   <text x=\"279\" y=\"136\" text-anchor=\"middle\">shaving only</text>\n  </svg>\n </figure>\n <div class=\"note keep\"><b>Hair shorter than a finger joint (≈ 2 cm)?</b> There is nothing to shorten — a man needs <b>shaving</b> (halq). Cutting “three hairs” is not enough for Hanafis: at least a quarter of the head is needed. Women do not shave their heads — they only shorten the hair by a finger joint.</div>\n <div class=\"flag\"><b>⚑ To check:</b> whether a clipper “to zero” without a blade counts as shaving — ask a scholar of Hanafi fiqh. A razor is safer.</div>\n <div class=\"note\">The Prophet <span class=\"saw\">ﷺ</span> asked for forgiveness three times for those who shaved their heads and once for those who shortened their hair <span class=\"small\">(al-Bukhari 1727, Muslim 1302)</span>.</div>\n <div class=\"dua\">\n  <div class=\"lbl\">After Umrah</div>\n  <div class=\"ar\">الْحَمْدُ لِلَّهِ</div>\n  <div class=\"tr\">Al-hamdu lillah</div>\n  <div class=\"ru\">“Praise be to Allah”. May Allah accept our Umrah!</div>\n </div>"
+ }
+]

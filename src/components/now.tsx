@@ -1,34 +1,53 @@
-/* Ядро «как iPhone»: экран «Сейчас», режим «Рядом» (шаги умры по одному на экран),
-   «Программа» (сегодня с подсветкой) и меню «Ещё». Время — clock.ts (с демо ?at=). */
-import { useEffect, useState } from 'preact/hooks'
+/* Экран «Сейчас»: одна большая карточка с одним главным действием и три быстрые плитки под ней.
+   Здесь же «Программа» (сегодня с подсветкой) и меню «Ещё». Время — clock.ts (с демо ?at=). */
+import { useEffect } from 'preact/hooks'
 import { PackList, Stories } from './extras'
-import { signal } from '@preact/signals'
-import { DayPlan, Today, loadProgram, program, programError, useCity } from './today'
-import { DuaList, ModePicker, Steps, ZikrList, useMode } from './guide'
+import { DayPlan, SavedNote, Today, loadProgram, program, programError, useCity } from './today'
+import { DuaList, ZikrList } from './guide'
 import { Announcement, FullProgram } from './group'
+import { lostOpen } from './lost'
+import { nearby } from './nearby'
 import { Where } from './where'
-import { Card, Html, Icon } from './ui'
-import { demo, leftText, slots, stepFor, tzOf, useNow, wall, where, type Slot } from '../lib/clock'
-import { content, loadContent, type DuaItem } from '../lib/content'
+import { InstallGuide, InstallHint } from './install'
+import { Card, Glyph, Icon } from './ui'
+import { demo, leftText, slots, stepFor, tzOf, useNow, wall, where, type Phase } from '../lib/clock'
+import { content, loadContent, type Step } from '../lib/content'
 import { cityByName, hhmm, next } from '../lib/prayer'
 import { data, done } from '../lib/store'
-import { fmtDate, pick, t } from '../lib/i18n'
-import type { ProgramDay } from '../lib/program'
+import { fmtDate, progLang, t } from '../lib/i18n'
+import type { ProgramDay, ProgramItem } from '../lib/program'
 
-/** Открытый в режиме «Рядом» шаг (id) или null */
-export const nearby = signal<string | null>(null)
+type Go = (h: string) => void
+type DayPhase = Extract<Phase, { kind: 'day' }>
+type BeforePhase = Extract<Phase, { kind: 'before' }>
+
+/** Главная кнопка карточки: одна на экран */
+interface Cta { over: string; title: string; icon?: string; solid: boolean; run: () => void }
+/** Что показывает карточка «Сейчас» */
+interface HeroView {
+  kicker: string; title: string; small?: boolean
+  /** заголовок — строка программы (она всегда на русском) */
+  prog?: boolean
+  time?: string; place?: string; note?: string; pay?: string
+  cta: Cta
+  next?: { over: string; text: string }
+}
+
+/** Заголовок длиннее — набираем мельче, чтобы главная кнопка и плитки остались на первом экране */
+const LONG_TITLE = 40
 
 const hm = (m: number) => hhmm(((m % 1440) + 1440) % 1440)
 const left = (m: number) => leftText(m, t('today.h'), t('today.m'))
+const line = (i: ProgramItem) => `${i.t} — ${i.w}`
 
 /* ───────── Сейчас ───────── */
 
-export function Now({ go }: { go: (h: string) => void }) {
+export function Now({ go }: { go: Go }) {
   useEffect(() => { loadProgram(); loadContent() }, [])
   const p = program.value
   const now = useNow(p)
   const d = data.value
-  if (!p) return programError.value ? <p class="err">{programError.value}</p> : <Card><div class="sk" /></Card>
+  if (!p) return programError.value ? <p class="err" role="alert">{programError.value}</p> : <Card><div class="sk" /></Card>
   const ph = where(p, now)
   const day = ph.kind === 'day' ? ph.day : ph.kind === 'before' ? ph.first : ph.last
   const tz = tzOf(day), w = wall(now, tz)
@@ -37,159 +56,128 @@ export function Now({ go }: { go: (h: string) => void }) {
     <>
       {demo && <p class="demo-chip">{t('now.demo')}: {fmtDate(w.iso)} {hm(w.min)} · UTC{tz >= 0 ? '+' : ''}{tz}</p>}
       {d ? <Announcement d={d} /> : null}
-
-      {ph.kind === 'before' && (
-        <Card cls="nowcard">
-          <div class="kicker">{t('now.before')}</div>
-          <div class="now-big">{ph.days} {t('now.days')}</div>
-          <p class="now-w">{fmtDate(ph.first.date)} · {ph.first.city}</p>
-          <Upcoming list={slots(ph.first).slice(0, 3)} />
-          <p class="muted">{t('now.prepare')}</p>
-          <div class="btns"><button class="btn" onClick={() => (nearby.value = 'ghusl')}>{t('now.steps')}</button></div>
-        </Card>
-      )}
-
-      {ph.kind === 'after' && (
-        <Card cls="nowcard">
-          <div class="now-big sm">{t('now.after')}</div>
-          <p class="muted">{t('now.after2')}</p>
-          <div class="btns"><button class="btn ghost" onClick={() => go('program')}>{t('nav.program')}</button>
-            <button class="btn ghost" onClick={() => go('more/dua')}>{t('more.dua')}</button></div>
-        </Card>
-      )}
-
-      {ph.kind === 'day' && <DayNow ph={ph} tz={tz} wmin={w.min} />}
-
-      <PrayerLine day={day} now={now} />
-
+      <Hero v={heroView(ph, w.min, go)} go={go} />
+      <Quick day={day} now={now} go={go} />
+      <SavedNote />
+      <InstallHint go={go} />
       {!d && <p class="muted"><small>{t('now.nocode')}</small></p>}
     </>
   )
 }
 
-function DayNow({ ph, tz, wmin }: { ph: Extract<ReturnType<typeof where>, { kind: 'day' }>; tz: number; wmin: number }) {
-  const { list, cur, nxt, min, tomorrow, day } = ph
-  void tz
-  if (cur === -2) {
-    return (
-      <Card cls="nowcard">
-        <div class="kicker">{hm(wmin)} · {day.city}</div>
-        <div class="now-big sm">{t('now.dayover')}</div>
-        {tomorrow && <>
-          <p class="now-w"><b>{t('now.tomorrow')}</b> · {fmtDate(tomorrow.date)} · {tomorrow.city}</p>
-          <Upcoming list={slots(tomorrow).slice(0, 3)} />
-        </>}
-      </Card>
-    )
+function heroView(ph: Phase, wmin: number, go: Go): HeroView {
+  if (ph.kind === 'before') return beforeView(ph, go)
+  if (ph.kind === 'after') return afterView(go)
+  return ph.cur === -2 ? restView(ph, wmin, go) : dayView(ph, wmin, go)
+}
+
+function beforeView(ph: BeforePhase, go: Go): HeroView {
+  const first = slots(ph.first)[0]
+  return {
+    kicker: t('now.before'),
+    title: `${ph.days} ${t('now.days')}`,
+    place: `${fmtDate(ph.first.date)} · ${ph.first.city}`,
+    cta: { over: t('now.getready'), title: t('now.pack'), icon: 'i-plane', solid: true, run: () => go('more/pack') },
+    next: first ? { over: fmtDate(ph.first.date), text: line(first.i) } : undefined,
   }
-  const main: Slot | undefined = cur >= 0 ? list[cur] : list[nxt]
+}
+
+function afterView(go: Go): HeroView {
+  return {
+    kicker: '', title: t('now.after'), small: true, note: t('now.after2'),
+    cta: { over: '', title: t('more.dua'), icon: 'b-dua', solid: false, run: () => go('more/dua') },
+  }
+}
+
+/** На сегодня всё: показываем, с чего начнётся завтра */
+function restView(ph: DayPhase, wmin: number, go: Go): HeroView {
+  const tm = ph.tomorrow
+  const first = tm ? slots(tm)[0] : undefined
+  return {
+    kicker: `${hm(wmin)} · ${ph.day.city}`, title: t('now.dayover'), small: true,
+    cta: { over: '', title: t('nav.program'), solid: false, run: () => go('program') },
+    next: tm && first ? { over: `${t('now.tomorrow')} · ${fmtDate(tm.date)} · ${tm.city}`, text: line(first.i) } : undefined,
+  }
+}
+
+function dayView(ph: DayPhase, wmin: number, go: Go): HeroView {
+  const { list, cur, nxt, min, day } = ph
   const isNow = cur >= 0
-  const nx = isNow && nxt >= 0 ? list[nxt] : !isNow && nxt >= 0 ? list[nxt + 1] : undefined
-  const step = main ? stepFor(main.i) : null
+  const main = isNow ? list[cur] : list[nxt]
+  if (!main) return restView(ph, wmin, go)
+  const nx = nxt >= 0 ? list[isNow ? nxt : nxt + 1] : undefined
+  const step = stepTarget(stepFor(main.i))
+  return {
+    kicker: `${isNow ? t('now.now') : t('now.next')} · ${hm(wmin)} · ${day.city}`,
+    time: main.i.t + (isNow ? '' : ` · ${t('now.in')} ${left(main.s - min)}`),
+    title: main.i.w,
+    prog: true,
+    small: main.i.w.length > LONG_TITLE,
+    place: [main.i.p, main.i.tr, main.i.who].filter(Boolean).join(' · '),
+    note: main.i.m,
+    pay: main.i.pay,
+    cta: step
+      ? { over: t('now.openstep'), title: `${step.num}. ${step.title}`, icon: step.icon, solid: true, run: () => { nearby.value = step.id } }
+      : { over: '', title: t('now.daybtn'), solid: false, run: () => go('program') },
+    next: nx ? { over: `${t('now.next')} · ${t('now.in')} ${left(nx.s - min)}`, text: line(nx.i) } : undefined,
+  }
+}
+
+/** Шаг умры для пункта программы: первый ещё не отмеченный, начиная с найденного */
+function stepTarget(id: string | null): Step | null {
+  const steps = content.value?.steps
+  if (!id || !steps) return null
+  const from = steps.findIndex(s => s.id === id)
+  if (from < 0) return null
+  return steps.slice(from).find(s => !done.value[s.id]) ?? steps[from]
+}
+
+function Hero({ v, go }: { v: HeroView; go: Go }) {
+  const c = v.cta
+  const pl = progLang()
   return (
-    <Card cls="nowcard">
-      <div class="kicker">{isNow ? t('now.now') : t('now.next')} · {hm(wmin)} · {day.city}</div>
-      {main && <>
-        <div class="now-t">{main.i.t}{!isNow && <small> · {t('now.in')} {left(main.s - min)}</small>}</div>
-        <div class="now-big">{main.i.w}</div>
-        {(main.i.p || main.i.tr || main.i.who) && <p class="now-w">{[main.i.p, main.i.tr, main.i.who].filter(Boolean).join(' · ')}</p>}
-        {main.i.m && <p class="now-m">{main.i.m}</p>}
-        {main.i.pay && <p class="pay">{main.i.pay}</p>}
-      </>}
-      {step && <MomentDua id={step} />}
-      {nx && (
-        <div class="now-next">
-          <span class="kicker">{t('now.next')} · {t('now.in')} {left(nx.s - min)}</span>
-          <div><b>{nx.i.t}</b> — {nx.i.w}</div>
-        </div>
+    <section class="hero">
+      {v.kicker && <div class="hero-k">{v.kicker}</div>}
+      {v.time && <div class="hero-t">{v.time}</div>}
+      <h1 class={'hero-h' + (v.small ? ' sm' : '')} lang={v.prog ? pl : undefined}>{v.title}</h1>
+      {v.place && <p class="hero-w" lang={pl}>{v.place}</p>}
+      {v.note && <p class="hero-m" lang={pl}>{v.note}</p>}
+      {v.pay && <p class="hero-m pay" lang={pl}>{v.pay}</p>}
+      <button class={'cta' + (c.solid ? ' solid' : '')} onClick={c.run}>
+        {c.icon && <Icon id={c.icon} size={34} />}
+        <span>{c.over && <small>{c.over}</small>}<b>{c.title}</b></span>
+        <i aria-hidden="true">›</i>
+      </button>
+      {v.next && (
+        <button class="hero-next" onClick={() => go('program')}>
+          <span><small>{v.next.over}</small><span lang={pl}>{v.next.text}</span></span>
+          <i aria-hidden="true">›</i>
+        </button>
       )}
-    </Card>
+    </section>
   )
 }
 
-/** Дуа момента + кнопка «Шаги рядом» */
-function MomentDua({ id }: { id: string }) {
-  const c = content.value
-  const s = c?.steps.find(x => x.id === id)
-  if (!s) return null
-  const du = s.dua?.[0]
-  return (
-    <div class="moment">
-      {du && <DuaBlock d={du} />}
-      <button class="btn or" onClick={() => (nearby.value = id)}><Icon id={s.icon} size={22} /> {s.num}. {s.title} — {t('now.steps').toLowerCase()}</button>
-    </div>
-  )
-}
-
-function DuaBlock({ d }: { d: DuaItem }) {
-  return (
-    <div class="dua">
-      {d.label && <div class="lbl">{d.label}</div>}
-      {d.ar && <div class="ar" dir="rtl" lang="ar">{d.ar}</div>}
-      {d.tr && <div class="tr">{d.tr}</div>}
-      {d.ru && <div class="ru">{d.ru}</div>}
-      {d.src && <div class="src">{d.src}</div>}
-    </div>
-  )
-}
-
-function Upcoming({ list }: { list: Slot[] }) {
-  return <div class="prog">{list.map((x, k) => <><span class="t" key={'t' + k}>{x.i.t}</span><span key={'w' + k}>{x.i.w}</span></>)}</div>
-}
-
-function PrayerLine({ day, now }: { day: ProgramDay; now: Date }) {
-  // в «Сейчас» город — всегда по программе дня (ручной выбор мог остаться с прошлого раза)
+/** Три быстрые плитки: намаз, дуа, «я потерялся» */
+function Quick({ day, now, go }: { day: ProgramDay; now: Date; go: Go }) {
+  // город — всегда по программе дня (ручной выбор мог остаться с прошлого раза)
   const city = cityByName(day.city) || useCity(day)
   const nx = next(now, city.lat, city.lon, city.tz, city.method)
-  if (!nx) return null
   return (
-    <Card cls="mint">
-      <p class="now" style="margin:0"><span class="kicker">{t('now.prayer')} · {pick(city.names)}</span><br />
-        <b>{t('p.' + nx.key)}</b> {hhmm(nx.min)} · {t('now.in')} {left(nx.left)}</p>
-    </Card>
-  )
-}
-
-/* ───────── Режим «Рядом» ───────── */
-
-export function Nearby() {
-  const id = nearby.value
-  const c = content.value
-  const [more, setMore] = useState(false)
-  useEffect(() => { setMore(false) }, [id])
-  useEffect(() => {
-    if (!id) return
-    loadContent()
-    const html = document.documentElement, was = html.style.overflow
-    html.style.overflow = 'hidden'
-    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') nearby.value = null }
-    addEventListener('keydown', esc)
-    return () => { html.style.overflow = was; removeEventListener('keydown', esc) }
-  }, [id])
-  if (!id) return null
-  if (!c) return <div class="near"><div class="sk" /></div>
-  const k = Math.max(0, c.steps.findIndex(s => s.id === id))
-  const s = c.steps[k], total = c.steps.length
-  const mark = () => { done.value = { ...done.value, [s.id]: true } }
-  const goTo = (j: number) => { nearby.value = c.steps[j].id; document.querySelector('.near')?.scrollTo(0, 0) }
-  return (
-    <div class="near" role="dialog" aria-modal="true" aria-label={s.title}>
-      <div class="near-top">
-        <span class="near-n">{s.num} {t('step.of')} {total}{done.value[s.id] ? ' ✓' : ''}</span>
-        <button class="btn ghost sm" onClick={() => (nearby.value = null)}>{t('step.close')} ✕</button>
-      </div>
-      <div class="near-ico"><Icon id={s.icon} size={56} /></div>
-      <h1 class="near-h">{s.title}</h1>
-      <p class="near-lead">{s.lead}</p>
-      {s.dua?.map((d, i) => <DuaBlock d={d} key={i} />)}
-      <button class="btn ghost sm" onClick={() => setMore(!more)} aria-expanded={more}>{t('step.more')} {more ? '▴' : '▾'}</button>
-      {more && <Html html={s.html} cls="near-more" />}
-      <div class="near-bar">
-        <button class="btn ghost" disabled={k === 0} onClick={() => goTo(k - 1)}>← {t('step.prev')}</button>
-        {k < total - 1
-          ? <button class="btn" onClick={() => { mark(); goTo(k + 1) }}>{t('step.next')} →</button>
-          : <button class="btn or" onClick={() => { mark(); nearby.value = null }}>{t('step.finish')} ✓</button>}
-      </div>
+    <div class="quick">
+      <button class="qt" onClick={() => go('more/prayer')}>
+        <Icon id="b-mihrab" size={28} />
+        <b>{nx ? `${t('p.' + nx.key)} ${hhmm(nx.min)}` : t('now.prayer')}</b>
+        {nx && <small>{t('now.in')} {left(nx.left)}</small>}
+      </button>
+      <button class="qt" onClick={() => go('more/dua')}>
+        <Icon id="b-dua" size={28} />
+        <b>{t('more.dua')}</b>
+      </button>
+      <button class="qt sos" onClick={() => { lostOpen.value = true }}>
+        <Icon id="b-pilgrim" size={28} />
+        <b>{t('lost.btn')}</b>
+      </button>
     </div>
   )
 }
@@ -200,15 +188,17 @@ export function ProgramNow() {
   useEffect(() => { loadProgram() }, [])
   const p = program.value
   const now = useNow(p)
-  if (!p) return programError.value ? <p class="err">{programError.value}</p> : <Card><div class="sk" /></Card>
+  if (!p) return programError.value ? <p class="err" role="alert">{programError.value}</p> : <Card><div class="sk" /></Card>
   const ph = where(p, now)
+  const pl = progLang()
   return (
     <>
+      <SavedNote />
       {ph.kind === 'day' && (
         <Card cls="sand">
           <h2>{t('now.today')}</h2>
-          <div class="day-h"><b>{fmtDate(ph.day.date)}</b><small>{ph.day.city}{ph.day.title ? ' · ' + ph.day.title : ''}</small></div>
-          <div class="plist">
+          <div class="day-h"><b>{fmtDate(ph.day.date)}</b><small lang={pl}>{ph.day.city}{ph.day.title ? ' · ' + ph.day.title : ''}</small></div>
+          <div class="plist" lang={pl}>
             {ph.list.map((x, k) => (
               <div key={k} class={'pr' + (k === ph.cur ? ' cur' : '') + (ph.cur !== -2 && k < ph.cur || ph.cur === -2 ? ' past' : '')}>
                 <span class="t">{x.i.t}</span>
@@ -221,7 +211,7 @@ export function ProgramNow() {
       )}
       {ph.kind === 'before' && <Card cls="sand"><h2>{t('now.before')} · {ph.days} {t('now.days')}</h2><DayPlan day={ph.first} /></Card>}
       <h2 style="margin:1.2rem .2rem .4rem">{t('now.allprog')}</h2>
-      <FullProgram />
+      <div lang={pl}><FullProgram /></div>
     </>
   )
 }
@@ -229,7 +219,6 @@ export function ProgramNow() {
 /* ───────── Ещё ───────── */
 
 const MORE: [string, string, string][] = [
-  ['umra', 'more.umra', 'b-tawaf'],
   ['dua', 'more.dua', 'b-dua'],
   ['zikr', 'more.zikr', 'b-prayer-mat'],
   ['prayer', 'more.prayer', 'b-mihrab'],
@@ -238,30 +227,35 @@ const MORE: [string, string, string][] = [
   ['stories', 'more.stories', 'i-voice'],
 ]
 
-export function More({ sub, go }: { sub: string; go: (h: string) => void }) {
-  const mode = useMode()
+/** Подразделы без видимого h1 — скрытый заголовок для чтеца (у сборов, историй и «экрана Домой» h1 свой) */
+const SUB_H1: Record<string, string> = { dua: 'more.dua', zikr: 'more.zikr', prayer: 'more.prayer', where: 'more.where' }
+
+export function More({ sub, go }: { sub: string; go: Go }) {
   const d = data.value
   if (sub) {
     return (
       <>
-        <button class="btn ghost sm back" onClick={() => go('more')}>{t('more.back')}</button>
-        {sub === 'umra' && <><button class="btn or" style="margin-bottom:.8rem" onClick={() => (nearby.value = 'ghusl')}>{t('now.steps')}</button>
-          <ModePicker mode={mode.value} set={m => (mode.value = m)} /><Steps mode={mode.value} canCheck /></>}
+        <button class="btn ghost sm back" onClick={() => go('more')}><span aria-hidden="true">←</span> {t('more.back')}</button>
+        {SUB_H1[sub] && <h1 class="sr-only">{t(SUB_H1[sub])}</h1>}
         {sub === 'dua' && <DuaList extra={d?.extra} />}
         {sub === 'zikr' && <ZikrList />}
         {sub === 'prayer' && <Today />}
         {sub === 'where' && <Where />}
         {sub === 'pack' && <PackList />}
         {sub === 'stories' && <Stories />}
+        {sub === 'install' && <InstallGuide />}
       </>
     )
   }
   return (
     <div class="more-list">
+      <h1 class="sr-only">{t('nav.more')}</h1>
+      <button class="more-row" onClick={() => go('program')}><Glyph id="list" size={30} /><span>{t('nav.program')}</span><i aria-hidden="true">›</i></button>
       {MORE.map(([id, key, ico]) => (
-        <button key={id} class="more-row" onClick={() => go('more/' + id)}><Icon id={ico} size={30} /><span>{t(key)}</span><i>›</i></button>
+        <button key={id} class="more-row" onClick={() => go('more/' + id)}><Icon id={ico} size={30} /><span>{t(key)}</span><i aria-hidden="true">›</i></button>
       ))}
-      <a class="more-row" href="https://umra.jurt.kz/haram3d/" target="_blank" rel="noopener"><Icon id="i-dome" size={30} /><span>{t('more.haram')}</span><i>↗</i></a>
+      <button class="more-row" onClick={() => go('more/install')}><Icon id="i-door" size={30} /><span>{t('more.install')}</span><i aria-hidden="true">›</i></button>
+      <a class="more-foot" href="/roles">{t('more.roles')}</a>
     </div>
   )
 }

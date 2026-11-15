@@ -1,0 +1,202 @@
+/* Гид 1.0: «Сейчас» с одним главным действием, «Путь», счётчик кругов в «Рядом», «Я потерялся».
+   Базовый шрифт 17px, зоны касания не меньше 44px, тёмный текст на оранжевом (контраст ≈ 6:1). */
+html{font-size:106.25%}
+body{font-size:1rem}
+
+:root{--on-orange:#00292C; --sos:#B3261E; --hero-warm:#FFC38F; --hero-cool:#9FE0DC; --brand-teal:#005A5C;
+  /* WCAG AA (этап 2): текст на заливках и рамка фокуса. Фирменные #005A5C, #00292C, #F07A1E не меняются */
+  --done:#167449; --on-teal:#FFFFFF; --on-done:#FFFFFF; --on-red:#FFFFFF; --focus:#005A5C}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--teal:#3AADAA; --on-teal:#001A1C; --on-done:#001A1C; --on-red:#001A1C; --focus:#8FD8D5}
+}
+:root[data-theme="dark"]{--teal:#3AADAA; --on-teal:#001A1C; --on-done:#001A1C; --on-red:#001A1C; --focus:#8FD8D5}
+
+.btn.or{color:var(--on-orange)}
+.demo-chip{color:var(--on-orange)}
+.btn.lost{background:var(--sos);border-color:var(--sos);color:#fff}
+
+/* ───── Доступность: фокус, текст на заливках, зоны касания ───── */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.top :focus-visible,.hero :focus-visible{outline-color:#fff}
+.near:focus,.near:focus-visible{outline:none}
+.btn,.btn.ghost.sel,.tabs button.on,.num,.tag.must,.dots7 span.on,.zktap .zkbtn,.donebtn{color:var(--on-teal)}
+.btn.ghost{color:var(--teal)}
+.btn.or,.ringbtn .tap{color:var(--on-orange)}
+.acc.info .num{color:var(--on-red)}
+.tag.har{color:var(--on-red)}
+.acc.next:not(.done) .num{color:var(--on-orange)}
+.done .num{color:var(--on-done)}
+.acc.info.blue .num{color:var(--on-teal)}
+.done .donebtn{color:var(--teal-d)}
+.top{background:var(--brand-teal)}
+.lang button.on{color:var(--brand-teal)}
+.btn.sm{min-height:44px}
+.pk{min-height:44px;align-items:center}
+.pk input{margin-top:0}
+.chk{min-width:44px;min-height:44px}
+/* кнопка шага/дуа: вся строка нажимается, клавиатура работает */
+.acc-t{flex:1;min-width:0;display:flex;align-items:center;gap:.75rem;min-height:44px;padding:0;background:none;border:0;
+  color:inherit;font:inherit;text-align:left;cursor:pointer}
+button.acc-h{width:100%;border:0;background:none;color:inherit;font:inherit;text-align:left}
+.acc-t .kicker{display:block}
+/* унаследовано из v2: раздела «Мои дуа» в ядре нет — не показываем; старый счётчик в «Рядом» заменён новым */
+.mygo{display:none !important}
+.near-more .counter{display:none}
+.linkbtn{display:inline;min-height:44px;padding:0;background:none;border:0;color:var(--teal);font:inherit;font-weight:700;
+  text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+
+/* ───── Сейчас: одна карточка, одно действие ───── */
+.hero{position:relative;overflow:hidden;margin:0 0 .75rem;padding:1.15rem 1.1rem 1.05rem;border-radius:22px;color:#fff;
+  border:1px solid rgba(255,255,255,.07);
+  background:radial-gradient(120% 90% at 100% 0,rgba(240,122,30,.28),transparent 55%),linear-gradient(160deg,#005A5C 0%,#00393C 55%,#00292C 100%);
+  box-shadow:0 14px 34px rgba(0,41,44,.28)}
+.hero-k{font-size:.78rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--hero-warm)}
+.hero-t{margin-top:.6rem;font-size:1.05rem;font-weight:700;color:var(--hero-cool);font-variant-numeric:tabular-nums}
+.hero-h{margin:.15rem 0 .35rem;font-size:1.85rem;line-height:1.14;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+.hero-h.sm{font-size:1.45rem;margin-top:.5rem}
+.hero-w{margin:0;font-size:1.02rem;color:rgba(255,255,255,.84)}
+.hero-m{margin:.6rem 0 0;padding:.55rem .75rem;border-radius:12px;background:rgba(255,255,255,.1);font-size:.98rem}
+.hero-m.pay{color:var(--hero-warm);font-weight:700}
+.hero .cta{margin-top:1rem}
+.hero-next{display:flex;align-items:center;gap:.6rem;width:100%;min-height:52px;margin-top:.85rem;padding:.7rem 0 0;background:none;border:0;
+  border-top:1px solid rgba(255,255,255,.16);color:#fff;font:inherit;text-align:left;cursor:pointer}
+.hero-next span{flex:1;min-width:0}
+.hero-next small{display:block;color:var(--hero-warm);font-size:.74rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.hero-next i{font-style:normal;font-size:1.5rem;color:rgba(255,255,255,.6)}
+
+.cta{display:flex;align-items:center;gap:.8rem;width:100%;min-height:68px;padding:.7rem 1rem;border-radius:18px;
+  border:2px solid rgba(255,255,255,.55);background:transparent;color:#fff;font:inherit;text-align:left;cursor:pointer;
+  transition:transform .12s var(--ease);touch-action:manipulation}
+.cta:active{transform:scale(.98)}
+.cta svg{flex:none}
+.cta span{flex:1;min-width:0;display:flex;flex-direction:column;gap:.05rem}
+.cta small{font-size:.74rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:inherit;opacity:.8}
+.cta.solid small{opacity:1}
+.cta b{font-size:1.2rem;line-height:1.2;font-weight:800}
+.cta > i{font-style:normal;font-size:1.7rem;line-height:1;opacity:.7}
+.cta.solid{background:var(--orange);border-color:var(--orange);color:var(--on-orange);box-shadow:0 8px 22px rgba(240,122,30,.35)}
+
+.quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0 0 .75rem}
+.qt{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;min-height:96px;padding:.75rem .7rem .7rem;border-radius:var(--r);
+  border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:var(--shadow);
+  touch-action:manipulation}
+.qt:active{transform:scale(.98)}
+.qt svg{color:var(--teal)}
+.qt b{font-size:.98rem;line-height:1.15;font-weight:700}
+.qt small{font-size:.8rem;line-height:1.2}
+.qt b,.qt small{max-width:100%;overflow-wrap:anywhere}
+.qt.sos{background:var(--redbg);border-color:transparent}
+.qt.sos svg,.qt.sos b{color:var(--red)}
+
+/* зоны касания 44px: ссылки на карты, логотип; заголовок h2 с видом h3 («От наставника») */
+.tap44{display:inline-flex;align-items:center;min-height:44px}
+.top .logo-a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
+.card > h2.as-h3{display:block;font-size:1.05rem;font-weight:600;color:var(--teal-d);margin-top:.2rem}
+.poll .opt[aria-disabled]{cursor:default}
+.more-foot{display:block;margin:1.2rem 0 0;min-height:44px;line-height:44px;text-align:center;font-size:.88rem;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+
+/* ───── Путь умры ───── */
+.path-head{margin:0 0 1rem}
+.pbar{height:8px;margin:.4rem 0 .8rem;border-radius:999px;background:var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:999px;background:var(--done)}
+.path{list-style:none;margin:0 0 1rem;padding:0}
+.prow{position:relative;display:flex;align-items:center;gap:.4rem}
+.prow::before{content:"";position:absolute;left:1.3rem;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--line)}
+.prow:first-child::before{top:50%}
+.prow:last-child::before{bottom:50%}
+.prow.done::before{background:var(--done)}
+.prow-open{flex:1;min-width:0;display:flex;align-items:center;gap:.85rem;min-height:64px;padding:.45rem .3rem .45rem 0;background:none;border:0;
+  color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.pnum{position:relative;z-index:1;flex:none;width:2.6rem;height:2.6rem;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1.05rem;background:var(--card);color:var(--teal);border:2px solid var(--line)}
+.prow.done .pnum{background:var(--done);border-color:var(--done);color:var(--on-done)}
+.prow.cur .pnum{background:var(--orange);border-color:var(--orange);color:var(--on-orange);box-shadow:0 0 0 .3rem rgba(240,122,30,.2)}
+.pt{display:flex;flex-direction:column;min-width:0}
+.pt b{font-size:1.1rem;line-height:1.2;font-weight:700}
+.pt small{font-size:.82rem}
+.prow.done .pt b{color:var(--muted)}
+.prow.cur .pt b{font-weight:800}
+.prow .chk{width:2.75rem;height:2.75rem;padding:0;background:none;color:var(--on-done);cursor:pointer}
+.prow.done .chk{background:var(--done)}
+.path-opt{margin:0 0 .55rem;padding:0 1rem;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+.path-opt[open]{padding-bottom:.9rem}
+.path-opt summary{display:flex;align-items:center;min-height:52px;font-weight:700;color:var(--teal-d);cursor:pointer;list-style:none}
+.path-opt summary::-webkit-details-marker{display:none}
+.path-opt summary::after{content:"▾";margin-left:auto;color:var(--muted)}
+.path-opt[open] summary::after{content:"▴"}
+
+/* ───── Рядом: счётчик кругов тавафа и саи ───── */
+.near-top .btn,.near-links .btn{min-height:44px;padding:.4rem .9rem;font-size:.92rem}
+.near-links{display:flex;flex-wrap:wrap;gap:.45rem}
+.near.cnt{gap:.7rem;padding-bottom:calc(8.6rem + env(safe-area-inset-bottom))}
+.near.cnt .near-h{font-size:1.45rem}
+.near-more .counter{display:none}
+.dial{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-align:center}
+.dial-ring{position:relative;width:min(64vw,16rem);aspect-ratio:1}
+.dial-ring svg{width:100%;height:100%}
+.dial-ring circle{fill:none;stroke:var(--line);stroke-width:7;stroke-linecap:round;transition:stroke .4s}
+.dial-ring circle.on{stroke:var(--done)}
+.dial-ring circle.cur{stroke:var(--orange);animation:breath 1.8s ease-in-out infinite}
+.dial.fin .dial-ring circle{stroke:var(--done)}
+@keyframes breath{50%{opacity:.35}}
+.dial-n{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.dial-n b{font-size:6.2rem;font-weight:800;color:var(--teal-d);font-variant-numeric:tabular-nums;animation:bump .45s var(--ease)}
+.dial-n span{margin-top:.2rem;font-size:1.05rem;font-weight:700;color:var(--muted)}
+.dial .kicker{margin-top:.3rem}
+.dial-hint{margin:0;font-size:1.3rem;line-height:1.25;font-weight:700}
+.dial-hint::first-letter{text-transform:uppercase}
+.near-bar.tap{grid-template-columns:4.4rem 1fr}
+.near-bar .plus,.near-bar .undo{min-height:84px;border-radius:22px;touch-action:manipulation}
+.near-bar .plus{gap:.7rem;background:var(--orange);border-color:var(--orange);color:var(--on-orange);box-shadow:0 8px 22px rgba(240,122,30,.35)}
+.near-bar .plus b{font-size:2.1rem;line-height:1;font-weight:800}
+.near-bar .plus span{font-size:1.05rem;line-height:1.15;font-weight:700;text-align:left}
+.near-bar .undo{font-size:1.25rem}
+
+/* ───── Я потерялся ───── */
+.near.lost{gap:.7rem;padding-bottom:calc(2rem + env(safe-area-inset-bottom))}
+.near.lost .near-n{color:var(--red)}
+.lost-h{margin:.3rem 0 0;font-size:1.8rem;line-height:1.15}
+.lost-lead{margin:0 0 .3rem;font-size:1.15rem}
+.lost-act{display:flex;align-items:center;gap:.85rem;width:100%;min-height:68px;padding:.7rem 1rem;border-radius:18px;border:1.5px solid var(--line);
+  background:var(--card);color:var(--ink);font:inherit;text-align:left;text-decoration:none;cursor:pointer;box-shadow:var(--shadow)}
+.lost-act svg{flex:none;color:var(--teal)}
+.lost-act span{flex:1;min-width:0;display:flex;flex-direction:column}
+.lost-act b{font-size:1.12rem;line-height:1.2;font-weight:700}
+.lost-act small{font-size:.84rem}
+.lost-act.or{background:var(--orange);border-color:var(--orange);color:var(--on-orange);box-shadow:0 8px 22px rgba(240,122,30,.35)}
+.lost-act.or svg,.lost-act.or small{color:var(--on-orange)}
+.lost-card{padding:.85rem 1rem;border-radius:var(--r);background:var(--sand)}
+.lost-card.hotel{display:flex;gap:.8rem;align-items:flex-start}
+.lost-card.hotel svg{flex:none;color:var(--teal);margin-top:.15rem}
+.lost-card .kicker{display:block;margin-bottom:.2rem}
+.lost-card b{display:block;font-size:1.25rem;line-height:1.2}
+.lost-card p{margin:.25rem 0 0}
+.lost-card .btn{margin-top:.6rem;min-height:48px}
+
+/* ───── Сохранённая программа и «экран Домой» ───── */
+.saved-note{margin:0 0 .75rem;padding:.55rem .8rem;border-radius:var(--r-s);background:var(--sand);color:var(--muted);font-size:.92rem}
+.a2hs-hint{display:flex;align-items:stretch;gap:.2rem;margin:0 0 .75rem;border:1px solid var(--line);border-radius:var(--r);background:var(--card)}
+.a2hs-go{flex:1;min-width:0;display:flex;align-items:center;gap:.5rem;min-height:44px;padding:.35rem .9rem;background:none;border:0;
+  color:var(--teal-d);font:600 .95rem var(--font);text-align:left;cursor:pointer}
+.a2hs-go span{flex:1}
+.a2hs-go i{font-style:normal;font-size:1.3rem;color:var(--muted)}
+.a2hs-x{flex:none;width:44px;min-height:44px;background:none;border:0;border-left:1px solid var(--line);color:var(--muted);font-size:1rem;cursor:pointer}
+.a2hs p{font-size:1.06rem}
+.a2hs-big{font-size:1.15rem !important;font-weight:600}
+.a2hs-steps{margin:.8rem 0 .2rem;padding:0;list-style:none;counter-reset:a2;display:flex;flex-direction:column;gap:.8rem}
+.a2hs-steps li{counter-increment:a2;position:relative;padding:.15rem 0 0 3.2rem;min-height:2.4rem;font-size:1.12rem;line-height:1.4}
+.a2hs-steps li::before{content:counter(a2);position:absolute;left:0;top:0;width:2.4rem;height:2.4rem;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;background:var(--orange);color:var(--on-orange);font-weight:800;font-size:1.15rem}
+.a2hs-btn{min-height:56px;padding:.6rem 1.6rem;font-size:1.1rem}
+
+/* ───── Шапка: длинное название группы — в две строки и мельче; переключатель языка — 44×44 ───── */
+.top .ttl b{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow-wrap:anywhere}
+.top .ttl.long b{font-size:.88rem;line-height:1.15}
+.lang{gap:0;margin-left:.2rem}
+.lang button{min-width:44px;min-height:44px;padding:0 .2rem;border:0;border-radius:12px;font-size:.78rem;background:transparent;position:relative}
+.lang button.on{background:#fff}
+@media (max-width:380px){ .top{gap:.45rem;padding-left:.7rem;padding-right:.5rem} .top .logo{height:24px} }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}

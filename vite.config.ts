@@ -36,11 +36,8 @@ export default defineConfig({
             handler: 'NetworkFirst',
             options: { cacheName: 'api', networkTimeoutSeconds: 8, expiration: { maxEntries: 20, maxAgeSeconds: 7 * 24 * 3600 } },
           },
-          {
-            urlPattern: /^https:\/\/umra\.jurt\.kz\/program\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'program', expiration: { maxEntries: 10, maxAgeSeconds: 30 * 24 * 3600 } },
-          },
+          // программа тура (umra.jurt.kz/program/) здесь намеренно не кэшируется: иначе на зависшей сети старый ответ
+          // выдавался бы за свежий. Офлайн-копия с датой — в localStorage, таймаут — в src/lib/program.ts.
         ],
       },
     }),

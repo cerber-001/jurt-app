@@ -1,0 +1,44 @@
+[
+  {
+    "id": "uhud",
+    "title": "Uhud: the archers on the mount",
+    "place": "Mount Uhud and the Archers' Hill, north of Madinah",
+    "lat": 24.5033,
+    "lng": 39.6117,
+    "radius": 1500,
+    "parts": [
+      {
+        "h": "Where you are standing",
+        "p": "In front of you is Mount Uhud, and the low hill opposite it is the Archers' Hill (it is called Jabal ar-Rumat or Aynayn). Here, in the 3rd year of the Hijrah, in the month of Shawwal, the Muslims of Madinah met the army of the Quraysh from Makkah. The martyrs of Uhud are buried nearby, among them Hamzah, the uncle of the Prophet ﷺ."
+      },
+      {
+        "h": "The order",
+        "p": "The Prophet ﷺ placed about fifty archers on this hill and appointed Abdullah ibn Jubayr over them. He told them not to leave their place, whether in victory or in defeat, until he himself sent for them: the hill protected the army from cavalry at the rear."
+      },
+      {
+        "h": "What happened",
+        "p": "The battle began in the Muslims' favour, and the Quraysh fled. Seeing this, many archers decided it was all over and went down for the spoils. Abdullah ibn Jubayr reminded them of the order, but only a few stayed with him. The Quraysh cavalry went around the hill and struck from behind. Victory turned into a hard day: about seventy Muslims fell as martyrs, and the Prophet ﷺ was wounded."
+      },
+      {
+        "h": "The lesson",
+        "p": "That day was decided not by numbers or courage, but by obedience and unity. A small “just for a minute” from a few people changed the fate of everyone. It is the same on pilgrimage: stay with the group, listen to the leader, do not go off alone “just for a minute”."
+      }
+    ],
+    "quran": [
+      {
+        "ref": "Al 'Imran 3:121",
+        "url": "https://quran.com/3:121-128",
+        "tr": "Translation of the meaning, rendered into English from the Russian edition of the Egyptian Ministry of Awqaf; pending review",
+        "t": "…you left your family to set the believers in position for battle at Mount Uhud."
+      },
+      {
+        "ref": "Al 'Imran 3:152",
+        "url": "https://quran.com/3:152-153",
+        "tr": "Translation of the meaning, rendered into English from the Russian translation by Abu Adel; pending review",
+        "t": "…when you lost heart and began to dispute about the command… and disobeyed… after He had shown you what you love. Among you are those who desire this world, and… who desire the Eternal Life… And He forgave you."
+      }
+    ],
+    "hadith": "The story of the archers, the order not to leave the hill and how it was broken is narrated in Sahih al-Bukhari, No. 3039, from al-Bara' ibn 'Azib (retold here, not word for word).",
+    "check": "This text is under review by a scholar of Hanafi fiqh and sirah. The verse translations are translations of the meaning, not the Quran itself."
+  }
+]

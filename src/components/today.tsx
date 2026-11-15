@@ -3,23 +3,71 @@
 import { useEffect, useState } from 'preact/hooks'
 import { signal } from '@preact/signals'
 import { CITIES, METHOD_NAMES, ORDER, cityByName, hhmm, next, qibla, times, type City, type Next } from '../lib/prayer'
-import { fetchProgram, type Program, type ProgramDay } from '../lib/program'
+import { loadProgramData, type Program, type ProgramDay } from '../lib/program'
 import { cityId, lang } from '../lib/store'
 import { weather, wmo, type Wx } from '../lib/weather'
-import { fmtDate, pick, t } from '../lib/i18n'
+import { fmtDate, pick, progLang, t, tf } from '../lib/i18n'
 import { Card } from './ui'
 
-/* Программа — одна на приложение, грузится один раз */
+/* Программа — одна на приложение. Первый раз грузится по запросу экрана, дальше тихо обновляется,
+   когда вернулась сеть или паломник вернулся на вкладку (не чаще раза в минуту). */
 export const program = signal<Program | null>(null)
 export const programError = signal('')
+/** Показана сохранённая копия: время сохранения (мс; 0 — неизвестно) или null — программа свежая */
+export const programSaved = signal<number | null>(null)
+
+const QUIET_REFRESH_MS = 60_000
 let busy = false
-export async function loadProgram() {
-  if (program.value || busy) return program.value
+let lastLoad = 0
+let watching = false
+
+async function pull(quiet: boolean) {
   busy = true
-  try { program.value = await fetchProgram(); programError.value = '' }
-  catch (e) { programError.value = (e as Error).message }
-  finally { busy = false }
+  try {
+    const r = await loadProgramData()
+    // тот же текст — не трогаем сигнал, чтобы экран не перерисовывался
+    if (!program.value || JSON.stringify(program.value) !== JSON.stringify(r.program)) program.value = r.program
+    programSaved.value = r.savedAt
+    programError.value = ''
+  } catch (e) {
+    if (!quiet || !program.value) programError.value = (e as Error).message   // при тихом обновлении старая программа остаётся
+  } finally {
+    busy = false
+    lastLoad = Date.now()
+  }
+}
+
+function refreshQuietly() {
+  if (busy || Date.now() - lastLoad < QUIET_REFRESH_MS) return
+  void pull(true)
+}
+
+function watch() {
+  if (watching || typeof window === 'undefined') return
+  watching = true
+  addEventListener('online', () => { lastLoad = 0; refreshQuietly() })
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshQuietly() })
+}
+
+export async function loadProgram() {
+  watch()
+  if (program.value || busy) return program.value
+  await pull(false)
   return program.value
+}
+
+/** Одна спокойная строка: «Нет сети — показана сохранённая программа от ДД.ММ ЧЧ:ММ» */
+export function SavedNote() {
+  const at = programSaved.value
+  if (at === null) return null
+  const text = at ? tf('prog.saved', { d: stamp(at) }) : t('prog.savednd')
+  return <p class="saved-note" role="status">{text}</p>
+}
+
+function stamp(ms: number) {
+  const d = new Date(ms)
+  const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return `${fmtDate(iso)} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
 }
 
 /** Дата YYYY-MM-DD в заданном смещении от UTC (часы) */
@@ -124,7 +172,7 @@ function Weather({ wx, todayIso }: { wx: Wx; todayIso: string }) {
           <div class={'kv' + (k === 0 ? ' now' : '')} key={i}>
             <span>{k === 0 ? t('tab.today') : fmtDate(wx.daily.time[i])}</span>
             <span>{EMOJI[w.icon] || ''} {w.label} · {Math.round(wx.daily.temperature_2m_min[i])}…{Math.round(wx.daily.temperature_2m_max[i])}°
-              {k === 0 && <small class="muted"> · {t('today.rain')} {wx.daily.precipitation_probability_max[i]}% · {t('today.wind')} {Math.round(wx.daily.wind_speed_10m_max[i])} км/ч · {t('today.uv')} {Math.round(wx.daily.uv_index_max[i])}</small>}
+              {k === 0 && <small class="muted"> · {t('today.rain')} {wx.daily.precipitation_probability_max[i]}% · {t('today.wind')} {Math.round(wx.daily.wind_speed_10m_max[i])} {t('today.kmh')} · {t('today.uv')} {Math.round(wx.daily.uv_index_max[i])}</small>}
             </span>
           </div>
         )
@@ -168,10 +216,11 @@ function Qibla({ city }: { city: City }) {
 }
 
 export function DayPlan({ day }: { day: ProgramDay }) {
+  const pl = progLang()
   return (
     <>
-      <div class="day-h"><b>{fmtDate(day.date)}</b><small>{day.city}{day.title ? ' · ' + day.title : ''}{day.tz ? ' · ' + day.tz : ''}</small></div>
-      <div class="prog">
+      <div class="day-h"><b>{fmtDate(day.date)}</b><small lang={pl}>{day.city}{day.title ? ' · ' + day.title : ''}{day.tz ? ' · ' + day.tz : ''}</small></div>
+      <div class="prog" lang={pl}>
         {day.items.map((i, k) => (
           <>
             <span class="t" key={'t' + k}>{i.t}</span>

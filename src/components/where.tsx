@@ -10,6 +10,7 @@ import { groupCode, me } from '../lib/store'
 import { t } from '../lib/i18n'
 import { Card } from './ui'
 import { isoAt, pickDay, program, loadProgram, useCity } from './today'
+import { autoLost } from './lost'
 
 const TRIP_END: Record<string, string> = { 'UMRA-0009': '2026-11-07' }
 function tripEnded(g: string) {
@@ -45,8 +46,10 @@ function WhereMap({ grp }: { grp: string }) {
   const id = myId()
   const ended = tripEnded(grp)
   const [name, setName] = useState(ls.get('jurt.whereName') || me.value?.first || me.value?.name || '')
-  const [sharing, setSharing] = useState(false)
-  const [lost, setLost] = useState(false)
+  // пришли с экрана «Я потерялся» — сразу делимся местом с пометкой, человек уже нажал кнопку там
+  const [sharing, setSharing] = useState(() => autoLost.value && !ended)
+  const [lost, setLost] = useState(() => autoLost.value && !ended)
+  useEffect(() => { autoLost.value = false }, [])
   const [pos, setPos] = useState<{ ll: [number, number]; acc: number } | null>(null)
   const [gpsErr, setGpsErr] = useState('')
   const [peers, setPeers] = useState<Peer[]>([])
@@ -115,7 +118,8 @@ function WhereMap({ grp }: { grp: string }) {
     if (!c || !sharing || ended) return
     const p = pos
     const nowT = Date.now()
-    if (!force && nowT - last.current.at < 3000) return
+    const firstFix = !!p && !last.current.ll   // первое место после «делиться» отправляем сразу, без паузы
+    if (!force && !firstFix && nowT - last.current.at < 3000) return
     const moved = !p || !last.current.ll || dist(p.ll, last.current.ll) > 10
     if (!force && !moved && nowT - last.current.at < 20000) return
     const payload = { id, name: name || t('where.me'), ll: p?.ll || null, acc: p?.acc, t: nowT, lost, city: city.id }
