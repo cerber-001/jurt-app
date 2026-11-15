@@ -4,14 +4,24 @@ import { vote } from '../lib/api'
 import { fetchProgram, type Program } from '../lib/program'
 import { code, data, error, loading, me, refresh } from '../lib/store'
 import type { AppData, Poll } from '../lib/types'
+import { localAt } from '../lib/announce'
+import { tzNow, useNow } from '../lib/clock'
+import { loadProgram, program } from './today'
 import { Card } from './ui'
 
 /** значение есть и это не прочерк */
 const ok = (v?: string) => !!v && v.trim() !== '—' && v.trim() !== '-'
 
+/** Время объявления — по часам города, где паломник сейчас (сервер пишет его по Алматы).
+    Пока программа не загружена, пояс неизвестен — показываем строку сервера как есть. */
 export function Announcement({ d }: { d: AppData }) {
-  if (!d.announcement?.text) return null
-  return <Card cls="sand"><div class="ann"><b>Объявление</b><p>{d.announcement.text}</p><small>{d.announcement.at}</small></div></Card>
+  useEffect(() => { loadProgram() }, [])
+  const p = program.value
+  const now = useNow(p)
+  const a = d.announcement
+  if (!a?.text) return null
+  const at = p ? localAt(a.at, now, tzNow(p, now)) : a.at
+  return <Card cls="sand"><div class="ann"><b>Объявление</b><p>{a.text}</p><small>{at}</small></div></Card>
 }
 
 export function GroupCard({ d, personal }: { d: AppData; personal: boolean }) {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { leftText, slots, stepFor, tzOf, wall, where, type Phase } from './clock'
+import { leftText, slots, stepFor, tzNow, tzOf, wall, where, type Phase } from './clock'
 import type { Program, ProgramDay, ProgramItem } from './program'
 import { at, DAY_DEPART, DAY_FLIGHT, DAY_MECCA, DAY_MEDINA, PROGRAM, PROGRAM_DEPART } from '../../tests/fixtures/program'
 
@@ -308,5 +308,20 @@ describe('stepFor', () => {
 
   test('пункт без текста — null', () => {
     expect(stepFor({ t: '', w: '' })).toBeNull()
+  })
+})
+
+describe('tzNow: пояс города, где паломник сейчас', () => {
+  test('в день Мекки — UTC+3', () => {
+    expect(tzNow(PROGRAM, at('2026-11-03', '12:00', 3))).toBe(3)
+  })
+
+  test('в день вылета из Алматы — UTC+5', () => {
+    expect(tzNow(PROGRAM, at('2026-11-01', '09:00', 5))).toBe(5)
+  })
+
+  test('до поездки — пояс первого дня, после — последнего', () => {
+    expect(tzNow(PROGRAM, at('2026-10-20', '12:00', 5))).toBe(5)
+    expect(tzNow(PROGRAM, at('2026-12-01', '12:00', 3))).toBe(3)
   })
 })

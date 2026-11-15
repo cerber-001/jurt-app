@@ -94,6 +94,12 @@ export function where(p: Program, now: Date): Phase {
   return between(days, now) ?? { kind: 'after', last }
 }
 
+/** Пояс города, где паломник сейчас по программе: день поездки, до неё — первый день, после — последний */
+export function tzNow(p: Program, now: Date): number {
+  const ph = where(p, now)
+  return tzOf(ph.kind === 'day' ? ph.day : ph.kind === 'before' ? ph.first : ph.last)
+}
+
 const DAY_MIN = 1440
 const DAY_MS = 86_400_000
 

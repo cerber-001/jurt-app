@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { FRESH_HOURS, announcedAt, isFresh } from './announce'
+import { FRESH_HOURS, announcedAt, isFresh, localAt } from './announce'
 
 /* Сервер пишет время объявления как «ДД.ММ ЧЧ:ММ» по Алматы (UTC+5), без года. */
 const utc = (iso: string) => new Date(iso + 'Z')
@@ -43,5 +43,25 @@ describe('isFresh', () => {
   test('без времени или с нечитаемым временем — не свежее', () => {
     expect(isFresh(undefined, now)).toBe(false)
     expect(isFresh('—', now)).toBe(false)
+  })
+})
+
+describe('localAt', () => {
+  const now = utc('2026-11-01T18:00:00')
+
+  test('Мекка (UTC+3): «13:35» по Алматы — это 11:35 по местному', () => {
+    expect(localAt('01.11 13:35', now, 3)).toBe('01.11 11:35')
+  })
+
+  test('Алматы (UTC+5): время не меняется', () => {
+    expect(localAt('01.11 13:35', now, 5)).toBe('01.11 13:35')
+  })
+
+  test('переход через полночь меняет и дату', () => {
+    expect(localAt('01.11 01:10', now, 3)).toBe('31.10 23:10')
+  })
+
+  test('нечитаемая строка возвращается как есть', () => {
+    expect(localAt('только что', now, 3)).toBe('только что')
   })
 })

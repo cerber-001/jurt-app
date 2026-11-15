@@ -30,3 +30,11 @@ export function isFresh(at: string | undefined, now: Date): boolean {
   const age = now.getTime() - when.getTime()
   return age >= -CLOCK_SKEW_MS && age < FRESH_HOURS * HOUR_MS
 }
+
+/** Время объявления по часам города паломника (UTC+tz), «ДД.ММ ЧЧ:ММ»; нечитаемую строку возвращает как есть */
+export function localAt(at: string, now: Date, tz: number): string {
+  const when = announcedAt(at, now)
+  if (!when) return at
+  const s = new Date(when.getTime() + tz * HOUR_MS).toISOString()
+  return `${s.slice(8, 10)}.${s.slice(5, 7)} ${s.slice(11, 16)}`
+}
