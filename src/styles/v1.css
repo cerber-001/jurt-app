@@ -200,3 +200,7 @@ button.acc-h{width:100%;border:0;background:none;color:inherit;font:inherit;text
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
 }
+
+/* свежее объявление — строка над главной карточкой «Сейчас» (вид — как у подсказки установки, плюс оранжевая полоса объявления) */
+.ann-new{border-left:4px solid var(--orange)}
+.ann-new-t{font-weight:400;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}

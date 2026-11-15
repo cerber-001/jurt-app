@@ -5,6 +5,7 @@ import { PackList, Stories } from './extras'
 import { DayPlan, SavedNote, Today, loadProgram, program, programError, useCity } from './today'
 import { DuaList, ZikrList } from './guide'
 import { Announcement, FullProgram } from './group'
+import { isFresh } from '../lib/announce'
 import { lostOpen } from './lost'
 import { nearby } from './nearby'
 import { Where } from './where'
@@ -42,11 +43,27 @@ const line = (i: ProgramItem) => `${i.t} — ${i.w}`
 
 /* ───────── Сейчас ───────── */
 
+const ANN_ID = 'ann-full'
+
+/** Свежее объявление — строкой над главной карточкой; нажатие прокручивает к полному тексту ниже */
+function FreshAnnouncement({ text }: { text: string }) {
+  const show = () => document.getElementById(ANN_ID)?.scrollIntoView({ block: 'center' })
+  return (
+    <div class="a2hs-hint ann-new">
+      <button class="a2hs-go" onClick={show}>
+        <span><b>{t('ann.new')}</b><span class="ann-new-t" lang={progLang()}>{text}</span></span>
+        <i aria-hidden="true">›</i>
+      </button>
+    </div>
+  )
+}
+
 export function Now({ go }: { go: Go }) {
   useEffect(() => { loadProgram(); loadContent() }, [])
   const p = program.value
   const now = useNow(p)
   const d = data.value
+  const ann = d?.announcement?.text ? d.announcement : null
   if (!p) return programError.value ? <p class="err" role="alert">{programError.value}</p> : <Card><div class="sk" /></Card>
   const ph = where(p, now)
   const day = ph.kind === 'day' ? ph.day : ph.kind === 'before' ? ph.first : ph.last
@@ -55,8 +72,10 @@ export function Now({ go }: { go: Go }) {
   return (
     <>
       {demo && <p class="demo-chip">{t('now.demo')}: {fmtDate(w.iso)} {hm(w.min)} · UTC{tz >= 0 ? '+' : ''}{tz}</p>}
-      {d ? <Announcement d={d} /> : null}
+      {ann && isFresh(ann.at, now) && <FreshAnnouncement text={ann.text} />}
       <Hero v={heroView(ph, w.min, go)} go={go} />
+      {/* полное объявление — под главной карточкой: иначе на телефоне оно выталкивает «Открыть шаг» под нижнее меню */}
+      {d && ann ? <div id={ANN_ID}><Announcement d={d} /></div> : null}
       <Quick day={day} now={now} go={go} />
       <SavedNote />
       <InstallHint go={go} />
