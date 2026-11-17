@@ -26,15 +26,34 @@ const SAVE_KEY = 'jurt.program'
 
 interface Saved { at: number; raw: Program }
 
-/* Публичная версия v3 — без имён «авторитетов» (решение 25.10.2026: устаз обезличен) */
-export function anonymize(p: Program): Program {
+/* Публичная версия v3 — без имён «авторитетов» (решение 25.10.2026: устаз обезличен).
+   Сами имена в публичном коде не хранятся: только их отпечаток (FNV-1a, 32 бита) от слова в нижнем регистре.
+   Добавить имя: node -e "…" с той же функцией fnv — см. program.test.ts. */
+const HIDDEN_NAMES: ReadonlySet<number> = new Set([0xcd3b1fe0])
+/** Падежные окончания имени: «…а», «…у», «…ом», «…е» */
+const CASE_ENDING = /(?:ом|а|у|е)$/
+/** Слово с заглавной буквы; \b в JS не видит границ русских слов — границы заданы явно */
+const CAP_WORD = /(?<![А-Яа-яЁё])[А-ЯЁ][а-яё]+(?![А-Яа-яЁё])/g
+
+function fnv(s: string): number {
+  let h = 0x811c9dc5
+  for (const ch of s) { h ^= ch.codePointAt(0) ?? 0; h = Math.imul(h, 0x01000193) >>> 0 }
+  return h
+}
+
+const isHidden = (word: string, hidden: ReadonlySet<number>): boolean => {
+  const w = word.toLowerCase()
+  return hidden.has(fnv(w)) || hidden.has(fnv(w.replace(CASE_ENDING, '')))
+}
+
+export function anonymize(p: Program, hidden: ReadonlySet<number> = HIDDEN_NAMES): Program {
   const fix = (s: string) =>
     s.replace(/духовный наставник\s+[А-ЯЁ][а-яё]+\s+[А-ЯЁ][а-яё]+/g, 'духовный наставник группы')
-     // \b в JS не видит границ русских слов — границы заданы явно
-     .replace(/(?<![А-Яа-яЁё])Даурен(?:а|у|ом|е)?(?![А-Яа-яЁё])/g, 'наставник')
+     .replace(CAP_WORD, w => (isHidden(w, hidden) ? 'наставник' : w))
+  const hasHidden = (s: string) => (s.match(CAP_WORD) ?? []).some(w => isHidden(w, hidden))
   const days = p.days.map(d => ({
     ...d,
-    items: d.items.map(i => ({ ...i, who: i.who && /Даурен/.test(i.who) ? 'наставник' : i.who, m: i.m ? fix(i.m) : i.m })),
+    items: d.items.map(i => ({ ...i, who: i.who && hasHidden(i.who) ? 'наставник' : i.who, m: i.m ? fix(i.m) : i.m })),
   }))
   return { ...p, group: fix(p.group), days }
 }

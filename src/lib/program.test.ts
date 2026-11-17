@@ -48,6 +48,19 @@ describe('anonymize', () => {
     expect(anonymize(PROGRAM)).toEqual(PROGRAM)
   })
 
+  test('скрытое имя задаётся только отпечатком: чужие слова с заглавной буквы не трогаются', () => {
+    const fnv = (s: string) => { let h = 0x811c9dc5; for (const ch of s) { h ^= ch.codePointAt(0) ?? 0; h = Math.imul(h, 0x01000193) >>> 0 } return h }
+    const hidden = new Set([fnv('тимур')])
+    const src: Program = { ...PROGRAM, group: 'Группа · Тимур', days: [{ ...PROGRAM.days[0], items: [
+      { t: '1', w: 'Мекка', m: 'Встреча с Тимуром в Мекке', who: 'Тимур' },
+      { t: '2', w: 'Медина', m: 'Тимурлан и Мекка', who: 'Айбар' },
+    ] }] }
+    const out = anonymize(src, hidden)
+    expect(out.group).toBe('Группа · наставник')
+    expect(out.days[0].items[0]).toMatchObject({ m: 'Встреча с наставник в Мекке', who: 'наставник' })
+    expect(out.days[0].items[1]).toMatchObject({ m: 'Тимурлан и Мекка', who: 'Айбар' })
+  })
+
   test('пункты с пустым m не ломаются', () => {
     expect(() => anonymize({ ...PROGRAM, days: [{ ...PROGRAM.days[0], items: [{ t: '1', w: 'x', m: '' }] }] })).not.toThrow()
   })

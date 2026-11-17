@@ -3,7 +3,7 @@
 Запуск: python3 tools/extract_v2.py [путь к index.html]
 Выход: public/content/{steps,info,dua,zikr,modes,meta}.json и public/content/icons.svg.
 Каждый блок имеет устойчивый id — на этом строится «конструктор» (паломник собирает гид из блоков)."""
-import re, json, sys, html, datetime, pathlib
+import re, json, os, sys, html, datetime, pathlib
 
 SRC = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else '/Users/chingismadiarov/umra-app/repo/index.html')
 OUT = pathlib.Path(__file__).resolve().parent.parent / 'public' / 'content'
@@ -152,4 +152,6 @@ print('dua', len(dua), [d['id'] for d in dua])
 print('zikr', len(zikr), [z['id'] for z in zikr])
 print('modes', [k['id'] for k in modes['kinds']], [d['id'] for d in modes['details']])
 print('icons', len(used & set(syms)), 'missing:', missing)
-print('personal names in output:', sum(json.dumps(x, ensure_ascii=False).count(w) for x in (steps, info, dua, zikr, modes) for w in ('Даурен', 'Мансур', 'Кубжанов')))
+# Личные имена для проверки — только из переменной окружения (через запятую), в публичном коде их нет
+CHECK_NAMES = [w.strip() for w in os.environ.get('JURT_PRIVATE_NAMES', '').split(',') if w.strip()]
+print('personal names in output:', sum(json.dumps(x, ensure_ascii=False).count(w) for x in (steps, info, dua, zikr, modes) for w in CHECK_NAMES) if CHECK_NAMES else 'не проверено: задайте JURT_PRIVATE_NAMES')
