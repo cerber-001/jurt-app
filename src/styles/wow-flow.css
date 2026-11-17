@@ -1,0 +1,108 @@
+/* 1.1: «Сейчас» (небо), переходы, финал умры — B · D · F. Токены — в wow.css */
+/* ───── B. «Сейчас»: небо по времени суток ───── */
+.hero.tod{background:var(--deep);isolation:isolate}
+.sky{position:absolute;inset:0;z-index:0;pointer-events:none}
+.sky i{position:absolute;inset:-20%;opacity:0;transition:opacity var(--sky-fade) ease}
+.sky i.on{opacity:1}
+/* рассвет: глубокий сапфир сверху, тёплая полоса горизонта снизу */
+.sky-dawn{background:
+  radial-gradient(95% 30% at 50% 84%,rgba(240,122,30,.5),transparent 72%),
+  radial-gradient(120% 45% at 50% 88%,rgba(244,237,225,.14),transparent 72%),
+  linear-gradient(180deg,var(--deep) 0%,var(--sap-d) 45%,var(--sap-l) 100%)}
+/* день: светлый сапфир, песочная дымка солнца справа сверху */
+.sky-day{background:
+  radial-gradient(55% 40% at 86% 16%,rgba(244,237,225,.26),transparent 70%),
+  radial-gradient(60% 50% at 0% 100%,rgba(0,41,44,.35),transparent 70%),
+  linear-gradient(160deg,var(--sap-l) 0%,var(--sap) 55%,var(--sap-d) 100%)}
+/* закат: акцентный огонь у горизонта слева, сапфир уходит в глубину */
+.sky-dusk{background:
+  radial-gradient(85% 45% at 10% 86%,rgba(240,122,30,.55),transparent 68%),
+  radial-gradient(70% 30% at 65% 86%,rgba(240,122,30,.22),transparent 70%),
+  linear-gradient(185deg,var(--deep) 0%,var(--sap-d) 48%,var(--sap) 100%)}
+/* ночь: почти чёрный сапфир, тихое свечение справа сверху */
+.sky-night{background:
+  radial-gradient(55% 40% at 84% 18%,rgba(10,114,117,.5),transparent 70%),
+  radial-gradient(45% 25% at 15% 86%,rgba(240,122,30,.12),transparent 70%),
+  linear-gradient(170deg,var(--deep) 0%,var(--abyss) 100%)}
+/* медленное «дыхание» неба — едва заметно, чтобы карточка жила */
+.sky i.on{animation:drift 26s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(-2%,0,0) scale(1)}to{transform:translate3d(2%,-2%,0) scale(1.04)}}
+.hero-in{position:relative;z-index:1}
+/* браузер без View Transitions: новый пункт мягко поднимается (с ними смену ведёт переход ниже) */
+.hero-in.rise{animation:rise .7s var(--ease-soft) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Контраст текста на небе (WCAG 2.2 AA): мелкий текст ≥ 4,5:1 в худшей точке карточки, включая свечение и дымку.
+   Свечение ослаблено, поверх неба — тихая вуаль цвета --abyss, плотнее там, где свет (рассвет и закат — у горизонта,
+   день — у солнца сверху). Расчёт по точкам градиентов — node tools/sky-contrast.mjs (18.11.2026); ночь вуали не требует. */
+.sky::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,26,28,var(--scrim-t,0)),rgba(0,26,28,var(--scrim-b,0)))}
+.tod-dawn .sky::after{--scrim-t:.18;--scrim-b:.3}
+.tod-day .sky::after{--scrim-t:.3;--scrim-b:.18}
+.tod-dusk .sky::after{--scrim-t:.16;--scrim-b:.28}
+/* подписи плотнее, плашки — тёмные: светлая плашка на светлом небе съедала контраст */
+.hero.tod .hero-w{color:rgba(255,255,255,.92)}
+.tod-dawn .hero-m,.tod-day .hero-m,.tod-dusk .hero-m{background:rgba(0,41,44,.22)}
+/* ───── B · D. Плавные переходы (View Transitions). data-vt ставит lib/transition.ts только на время перехода ───── */
+/* смена пункта в «Сейчас»: карточка меняет высоту плавно, содержимое под ней переезжает следом */
+html[data-vt=hero] .hero{view-transition-name:jurt-hero}
+html[data-vt=hero] .now-below{view-transition-name:jurt-below}
+::view-transition-group(jurt-hero){overflow:clip;border-radius:22px;animation-duration:.6s;animation-timing-function:var(--ease-soft)}
+::view-transition-group(jurt-below){animation-duration:.6s;animation-timing-function:var(--ease-soft)}
+::view-transition-old(jurt-hero){animation:vt-out .28s ease both}
+::view-transition-new(jurt-hero){animation:vt-in .6s var(--ease-soft) .08s both}
+/* смена вкладки: шапка и нижнее меню стоят на месте, содержимое тихо сменяется со сдвигом в сторону движения */
+html[data-vt^=tab] .top{view-transition-name:jurt-top}
+html[data-vt^=tab] .bnav{view-transition-name:jurt-nav}
+html[data-vt=tab]::view-transition-old(root){animation:vt-out .18s ease both,vt-left .18s ease both}
+html[data-vt=tab]::view-transition-new(root){animation:vt-in .34s var(--ease-soft) both,vt-from-right .34s var(--ease-soft) both}
+html[data-vt=tab-back]::view-transition-old(root){animation:vt-out .18s ease both,vt-right .18s ease both}
+html[data-vt=tab-back]::view-transition-new(root){animation:vt-in .34s var(--ease-soft) both,vt-from-left .34s var(--ease-soft) both}
+@keyframes vt-out{to{opacity:0}}
+@keyframes vt-in{from{opacity:0}}
+@keyframes vt-left{to{transform:translateX(-12px)}}
+@keyframes vt-right{to{transform:translateX(12px)}}
+@keyframes vt-from-right{from{transform:translateX(18px)}}
+@keyframes vt-from-left{from{transform:translateX(-18px)}}
+/* «Уменьшить движение»: transition.ts переход не запускает; это — страховка на случай смены настройки посреди перехода */
+@media (prefers-reduced-motion:reduce){
+  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none !important}
+}
+/* ───── F. Финал умры ───── */
+/* центрирование через margin:auto: на низком экране (320 px, крупный шрифт) верх не обрезается, а прокручивается */
+.finale{position:fixed;inset:0;z-index:80;overflow-y:auto;overscroll-behavior:contain;color:var(--sand-l);background:var(--abyss);
+  display:flex;padding:calc(1.5rem + env(safe-area-inset-top)) 1.25rem calc(1.5rem + env(safe-area-inset-bottom));
+  animation:fin-fade 1s ease both}
+@keyframes fin-fade{from{opacity:0}}
+.finale:focus{outline:none}
+/* свет: тёплый рассвет сверху и сапфировое сияние снизу — только градиенты палитры, только transform/opacity */
+.finale-light{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.finale-light i{position:absolute;left:50%;top:-62vmax;width:124vmax;height:124vmax;margin-left:-62vmax;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(240,122,30,.42),rgba(240,122,30,.12) 45%,transparent 72%);
+  animation:dawnRise 3.2s var(--ease-soft) both, glow 9s ease-in-out 3.2s infinite alternate}
+.finale-light i + i{top:auto;bottom:-62vmax;background:radial-gradient(closest-side,rgba(10,114,117,.45),rgba(0,90,92,.15) 50%,transparent 72%);
+  animation:dawnRise 3.6s var(--ease-soft) .3s both, glow 11s ease-in-out 3.9s infinite alternate-reverse}
+@keyframes dawnRise{from{opacity:0;transform:translateY(12%) scale(.85)}to{opacity:1;transform:none}}
+@keyframes glow{from{transform:scale(1);opacity:1}to{transform:scale(1.08);opacity:.75}}
+.finale-in{position:relative;z-index:1;margin:auto;width:100%;max-width:34rem;display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center}
+/* текст проявляется по очереди; кнопка с фокусом — сразу, без задержки: фокус не должен быть невидимым */
+.finale .kicker{color:#F5A866;animation:rise .9s var(--ease-soft) .3s both}
+.finale h1{margin:0;font-size:clamp(1.6rem,7.4vw,2.05rem);line-height:1.18;font-weight:800;text-wrap:balance;color:#fff;animation:rise 1s var(--ease-soft) .5s both}
+.finale-dua{display:flex;flex-direction:column;gap:.55rem;width:100%;padding:1.1rem 1rem;border-radius:22px;
+  background:rgba(244,237,225,.06);border:1px solid rgba(244,237,225,.12);animation:rise 1s var(--ease-soft) .8s both}
+.finale-dua .lbl{font-size:.8rem;font-weight:700;letter-spacing:.04em;color:#F5A866}
+.finale-dua .ar{margin-top:.5rem;font-family:var(--font-ar);font-size:clamp(1.7rem,8vw,2.2rem);line-height:2;color:#FBE6CC}
+.finale-dua .tr{font-size:1.08rem;font-weight:600}
+.finale-dua .ru{font-size:1.02rem;line-height:1.5;color:rgba(244,237,225,.88)}
+.finale-dua .src{font-size:.8rem;color:rgba(244,237,225,.6)}
+.finale-p{margin:0;font-size:1.05rem;color:rgba(244,237,225,.85);animation:rise 1s var(--ease-soft) 1.1s both}
+.finale .finale-go{min-height:56px;padding:.6rem 1.8rem;font-size:1.1rem;background:var(--ember);border-color:var(--ember);color:var(--deep);
+  animation:rise .5s var(--ease-soft) both}
+.finale :focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media (max-width:360px){
+  .finale{padding-left:1rem;padding-right:1rem}
+  .finale-dua{padding:1rem .8rem}
+  .finale .finale-go{width:100%}
+}
+/* «Уменьшить движение»: общий сброс в v1.css не убирает задержки — без этого текст и кнопка появлялись бы с паузой */
+@media (prefers-reduced-motion:reduce){
+  .finale,.finale *{animation:none !important}
+}

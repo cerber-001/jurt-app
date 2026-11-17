@@ -1,12 +1,13 @@
 /* «Где группа» — карта Leaflet (OSM) + Supabase Realtime, тот же канал, что у v2 (/where/): положение людей
    живёт только в Presence и не сохраняется; точка сбора и заметки — таблицы where_points / where_notes.
-   Включается вручную, выключается в любой момент; после даты окончания поездки обмен выключен. */
+   Включается вручную, выключается в любой момент; после даты окончания поездки обмен выключен.
+   1.1: Leaflet и Supabase грузятся только при открытии этого раздела (динамический import), первый экран их не ждёт. */
 import { useEffect, useRef, useState } from 'preact/hooks'
-import * as L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import type * as Leaflet from 'leaflet'
 import type { RealtimeChannel } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import { groupCode, me } from '../lib/store'
+import { groupCodeOrEmpty } from '../lib/codes'
 import { t } from '../lib/i18n'
 import { Card } from './ui'
 import { isoAt, pickDay, program, loadProgram, useCity } from './today'
@@ -34,10 +35,23 @@ function dist(a: [number, number], b: [number, number]) {
   return 2 * R * Math.asin(Math.sqrt(s))
 }
 function fmtDist(m: number) { return m < 1000 ? `${Math.round(m)} м` : `${(m / 1000).toFixed(1)} км` }
+type LeafletLib = typeof Leaflet
+let leaflet: Promise<LeafletLib> | null = null
+/** Leaflet вместе со своими стилями — один раз на приложение; после сбоя (нет сети и нет кэша) пробуем снова */
+function loadLeaflet(): Promise<LeafletLib> {
+  if (!leaflet) {
+    leaflet = Promise.all([import('leaflet'), import('leaflet/dist/leaflet.css')])
+      .then(([m]) => m as LeafletLib)
+      .catch((e: unknown) => { leaflet = null; throw e })
+  }
+  return leaflet
+}
+
 function ago(ts: number) { const m = Math.round((Date.now() - ts) / 60000); return m < 1 ? t('where.now') : `${m} ${t('where.ago')}` }
 
 export function Where() {
-  const grp = groupCode.value
+  // код уходит в фильтр Realtime (grp=eq.…) — только проверенный код группы
+  const grp = groupCodeOrEmpty(groupCode.value)
   if (!grp) return <Card cls="sand"><p>{t('where.nocode')}</p></Card>
   return <WhereMap grp={grp} key={grp} />
 }
@@ -58,8 +72,9 @@ function WhereMap({ grp }: { grp: string }) {
   const [noteText, setNoteText] = useState('')
   const [online, setOnline] = useState(false)
   const mapEl = useRef<HTMLDivElement>(null)
-  const map = useRef<L.Map | null>(null)
-  const layer = useRef<L.LayerGroup | null>(null)
+  const [L, setL] = useState<LeafletLib | null>(null)
+  const map = useRef<Leaflet.Map | null>(null)
+  const layer = useRef<Leaflet.LayerGroup | null>(null)
   const ch = useRef<RealtimeChannel | null>(null)
   const last = useRef<{ ll: [number, number] | null; at: number }>({ ll: null, at: 0 })
   const payloadRef = useRef<Record<string, unknown> | null>(null)
@@ -69,28 +84,39 @@ function WhereMap({ grp }: { grp: string }) {
   const picked = pickDay(program.value, isoAt(now, -now.getTimezoneOffset() / 60))
   const city = useCity(picked?.day)
 
-  /* карта */
+  /* карта: сначала подгружаем Leaflet, потом рисуем */
   useEffect(() => {
-    if (!mapEl.current || map.current) return
+    let live = true
+    loadLeaflet().then(m => { if (live) setL(() => m) }).catch(() => { /* офлайн без кэша: карта пустая, список и заметки работают */ })
+    return () => { live = false }
+  }, [])
+  useEffect(() => {
+    if (!L || !mapEl.current || map.current) return
     const m = L.map(mapEl.current, { zoomControl: true, attributionControl: true }).setView([city.lat, city.lon], 14)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(m)
     layer.current = L.layerGroup().addTo(m)
     map.current = m
-    return () => { m.remove(); map.current = null }
-  }, [])
+    return () => { m.remove(); map.current = null; layer.current = null }
+  }, [L])
 
   /* данные: точки и заметки */
   async function loadPoints() {
-    const { data } = await supabase.from('where_points').select('*').eq('grp', grp)
+    const { data } = await (await getSupabase()).from('where_points').select('*').eq('grp', grp)
     setPoints((data || []) as Point[])
   }
   async function loadNotes() {
-    const { data } = await supabase.from('where_notes').select('*').eq('grp', grp).order('created_at', { ascending: false }).limit(20)
+    const { data } = await (await getSupabase()).from('where_notes').select('*').eq('grp', grp).order('created_at', { ascending: false }).limit(20)
     setNotes((data || []) as Note[])
   }
 
   /* канал Realtime */
   useEffect(() => {
+    let off: (() => void) | null = null
+    let live = true
+    getSupabase().then(sb => { if (live) off = subscribe(sb) }).catch(() => setOnline(false))
+    return () => { live = false; off?.() }
+  }, [grp])
+  function subscribe(supabase: Awaited<ReturnType<typeof getSupabase>>) {
     loadPoints(); loadNotes()
     const c = supabase.channel('where:' + grp, { config: { presence: { key: id }, broadcast: { self: false } } })
     c.on('presence', { event: 'sync' }, () => {
@@ -110,7 +136,7 @@ function WhereMap({ grp }: { grp: string }) {
     const hide = () => { c.untrack() }
     addEventListener('pagehide', hide)
     return () => { removeEventListener('pagehide', hide); supabase.removeChannel(c); ch.current = null }
-  }, [grp])
+  }
 
   /* публикация своего положения */
   function publish(force = false) {
@@ -146,17 +172,17 @@ function WhereMap({ grp }: { grp: string }) {
 
   /* маркеры */
   useEffect(() => {
-    const lg = layer.current; if (!lg) return
+    const lg = layer.current; if (!lg || !L) return
     lg.clearLayers()
     const mk = (ll: [number, number], cls: string, label: string) =>
       L.marker(ll, { icon: L.divIcon({ className: '', html: `<div class="pdot ${cls}"></div><div class="pname">${esc(label)}</div>`, iconSize: [14, 14], iconAnchor: [7, 7] }) })
     for (const p of peers) if (p.ll) mk(p.ll, p.lost || p.sos ? 'lost' : '', p.name).addTo(lg)
     if (pos && sharing) { L.circle(pos.ll, { radius: pos.acc, color: '#F07A1E', weight: 1, fillOpacity: .08 }).addTo(lg); mk(pos.ll, 'me', t('where.me')).addTo(lg) }
     for (const pt of points) L.marker([pt.lat, pt.lon], { icon: L.divIcon({ className: '', html: `<span class="pin">📍</span><div class="pname">${esc(pt.name)}</div>`, iconSize: [0, 0] }) }).addTo(lg)
-  }, [peers, points, pos, sharing])
+  }, [peers, points, pos, sharing, L])
 
   function fitAll() {
-    const m = map.current; if (!m) return
+    const m = map.current; if (!m || !L) return
     const pts: [number, number][] = [...peers.filter(p => p.ll).map(p => p.ll as [number, number]), ...points.map(p => [p.lat, p.lon] as [number, number])]
     if (pos && sharing) pts.push(pos.ll)
     if (pts.length) m.fitBounds(L.latLngBounds(pts).pad(.3), { maxZoom: 17 })
@@ -166,15 +192,16 @@ function WhereMap({ grp }: { grp: string }) {
   async function setMeet() {
     if (!pos) return
     const pid = rid(6)
+    const supabase = await getSupabase()
     await supabase.from('where_points').update({ meet_at: null }).eq('grp', grp).neq('id', pid)
     await supabase.from('where_points').upsert({ id: pid, grp, name: t('where.meet') + (name ? ' · ' + name : ''), lat: pos.ll[0], lon: pos.ll[1], meet_at: new Date().toISOString(), by_id: id })
     loadPoints()
   }
-  async function clearMeet(pt: Point) { await supabase.from('where_points').delete().eq('id', pt.id).eq('grp', grp); loadPoints() }
+  async function clearMeet(pt: Point) { await (await getSupabase()).from('where_points').delete().eq('id', pt.id).eq('grp', grp); loadPoints() }
   async function sendNote(e: Event) {
     e.preventDefault()
     const body = noteText.trim().slice(0, 280); if (!body) return
-    await supabase.from('where_notes').insert({ id: rid(10), grp, body, by_name: (name || '').slice(0, 40) || null })
+    await (await getSupabase()).from('where_notes').insert({ id: rid(10), grp, body, by_name: (name || '').slice(0, 40) || null })
     setNoteText(''); loadNotes()
   }
 

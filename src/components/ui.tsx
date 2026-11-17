@@ -36,7 +36,9 @@ export function Top({ title, sub, role, inert }: { title: string; sub?: string; 
   return (
     <header class="top" inert={inert}>
       <a href="/" class="logo-a" aria-label={'JURT, ' + t('c.home')}><img class="logo" src="/logo-white.svg" alt="" /></a>
-      <div class={'ttl' + (title.length > LONG_TITLE ? ' long' : '')}><b>{title}</b>{sub && <small>{sub}</small>}</div>
+      {/* подзапись есть всегда (пустая — неразрывный пробел, чтецу скрыта): название группы и код приходят из сети
+          позже, и шапка не должна менять высоту (CLS). Высоту блока держит и CSS (.top .ttl в v1.css) */}
+      <div class={'ttl' + (title.length > LONG_TITLE ? ' long' : '')}><b>{title}</b><small aria-hidden={sub ? undefined : 'true'}>{sub || '\u00a0'}</small></div>
       <span class="role">{role}</span>
       {apiMode.value === 'v3' && <span class="role" title="Данные из Supabase (этап 2); без ?api=v3 — из таблицы Main_v2">v3</span>}
       <LangSwitch />
@@ -100,17 +102,39 @@ export function Foot() {
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select,textarea,summary,[tabindex]:not([tabindex="-1"])'
 
+/** Элемент с фокусом сейчас, если он не body: куда вернуть фокус после окна */
+function focusedNow(): HTMLElement | null {
+  const a = typeof document === 'undefined' ? null : document.activeElement
+  return a instanceof HTMLElement && a !== document.body ? a : null
+}
+
+/** Окно закрылось: фокус — туда, откуда открыли; если того элемента уже нет (или он недоступен) — в начало
+    содержимого <main> (как при смене раздела в pilgrim.tsx), а не в никуда (body) */
+function restoreFocus(back: HTMLElement | null) {
+  if (back?.isConnected && !back.closest('[inert]')) { back.focus(); if (document.activeElement === back) return }
+  const main = document.querySelector<HTMLElement>('main')
+  if (!main || main.closest('[inert]')) return
+  if (!main.hasAttribute('tabindex')) main.tabIndex = -1
+  main.focus({ preventScroll: true })
+}
+
 /** Окно поверх экрана (role="dialog"): фокус внутрь при открытии, Tab не уходит наружу, Escape закрывает,
     после закрытия фокус возвращается туда, откуда открыли. Контейнеру нужен tabIndex={-1}.
+    Откуда открыли — запоминаем ещё при отрисовке: к моменту эффекта <main>, шапка и меню уже inert
+    (pilgrim.tsx), и браузер мог увести фокус в body.
     Системная «Назад» (Android) закрывает окно: при открытии кладём запись в историю, по popstate — onClose.
     Закрыли кнопкой — запись снимаем history.back(), но только если адрес не менялся (переход из окна,
     например «Я потерялся» → карта, уже заменил адрес — его не откатываем). */
 export function useDialog(ref: RefObject<HTMLElement>, open: boolean, onClose: () => void) {
   const closeRef = useRef(onClose)
   closeRef.current = onClose
+  const opener = useRef<HTMLElement | null>(null)
+  const wasOpen = useRef(false)
+  if (open && !wasOpen.current) opener.current = focusedNow()
+  wasOpen.current = open
   useEffect(() => {
     if (!open) return
-    const back = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    const back = opener.current ?? focusedNow()
     ref.current?.focus()
     const href = location.href
     history.pushState({ jurtOverlay: 1 }, '')
@@ -132,7 +156,7 @@ export function useDialog(ref: RefObject<HTMLElement>, open: boolean, onClose: (
       removeEventListener('keydown', key)
       removeEventListener('popstate', onPop)   // снять ДО back(), иначе он вызовет onClose повторно
       if (!popped && (history.state as { jurtOverlay?: number } | null)?.jurtOverlay && location.href === href) history.back()
-      if (back?.isConnected) back.focus()
+      restoreFocus(back)
     }
   }, [open])
 }

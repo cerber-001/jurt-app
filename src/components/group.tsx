@@ -8,6 +8,7 @@ import { localAt } from '../lib/announce'
 import { tzNow, useNow } from '../lib/clock'
 import { loadProgram, program } from './today'
 import { Card } from './ui'
+import { progLang, t, tf } from '../lib/i18n'
 
 /** значение есть и это не прочерк */
 const ok = (v?: string) => !!v && v.trim() !== '—' && v.trim() !== '-'
@@ -21,7 +22,7 @@ export function Announcement({ d }: { d: AppData }) {
   const a = d.announcement
   if (!a?.text) return null
   const at = p ? localAt(a.at, now, tzNow(p, now)) : a.at
-  return <Card cls="sand"><div class="ann"><b>Объявление</b><p>{a.text}</p><small>{at}</small></div></Card>
+  return <Card cls="sand"><div class="ann"><b>{t('grp.ann')}</b><p lang={progLang()}>{a.text}</p><small>{at}</small></div></Card>
 }
 
 export function GroupCard({ d, personal }: { d: AppData; personal: boolean }) {
@@ -30,14 +31,14 @@ export function GroupCard({ d, personal }: { d: AppData; personal: boolean }) {
     <Card>
       <h2>{g.name || g.code} <span class="pill">{g.code}</span></h2>
       <div class="kv">
-        <span>Вылет</span><span>{g.dep}</span>
-        <span>Возврат</span><span>{g.ret}</span>
-        <span>Медина</span><span>{g.medina}</span>
-        <span>Мекка</span><span>{g.mecca}</span>
-        {g.flights && <><span>Рейсы</span><span>{g.flights}</span></>}
+        <span>{t('grp.dep')}</span><span>{g.dep}</span>
+        <span>{t('grp.ret')}</span><span>{g.ret}</span>
+        <span>{t('grp.medina')}</span><span>{g.medina}</span>
+        <span>{t('grp.mecca')}</span><span>{g.mecca}</span>
+        {g.flights && <><span>{t('grp.flights')}</span><span>{g.flights}</span></>}
       </div>
-      {personal && d.chat && <a class="btn sm" href={d.chat} target="_blank" rel="noopener noreferrer">Чат группы в WhatsApp</a>}
-      <p class="muted" style="font-size:.8rem">Обновлено {d.updated}{loading.value ? ' · обновляю…' : ''}</p>
+      {personal && d.chat && <a class="btn sm" href={d.chat} target="_blank" rel="noopener noreferrer">{t('grp.chat')}</a>}
+      <p class="muted" style="font-size:.8rem">{tf('grp.upd', { d: d.updated })}{loading.value ? ' · ' + t('grp.loading') : ''}</p>
     </Card>
   )
 }
@@ -47,10 +48,10 @@ export function MeCard({ d }: { d: AppData }) {
   if (!m) return null
   return (
     <Card cls="mint">
-      <h2>Ассаляму алейкум, {m.first || m.name}</h2>
+      <h2>{tf('grp.hi', { n: m.first || m.name })}</h2>
       <div class="kv">
-        <span>Комната в Медине</span><span>{m.medina || '—'}{m.matesMedina?.length ? ' · с ' + m.matesMedina.map(x => x.name).join(', ') : ''}</span>
-        <span>Комната в Мекке</span><span>{m.mecca || '—'}{m.matesMecca?.length ? ' · с ' + m.matesMecca.map(x => x.name).join(', ') : ''}</span>
+        <span>{t('grp.room.medina')}</span><span>{m.medina || '—'}{m.matesMedina?.length ? ' · ' + tf('grp.with', { names: m.matesMedina.map(x => x.name).join(', ') }) : ''}</span>
+        <span>{t('grp.room.mecca')}</span><span>{m.mecca || '—'}{m.matesMecca?.length ? ' · ' + tf('grp.with', { names: m.matesMecca.map(x => x.name).join(', ') }) : ''}</span>
       </div>
     </Card>
   )
@@ -60,10 +61,10 @@ export function Points({ d }: { d: AppData }) {
   if (!d.points?.length) return null
   return (
     <Card>
-      <h3>Места сбора</h3>
+      <h3>{t('grp.points')}</h3>
       <ul class="list">
         {d.points.map((p, i) => (
-          <li key={i}><b>{p.city}: {p.name}</b><br /><small>{p.how}</small>{p.map && <> · <a class="tap44" href={p.map} target="_blank" rel="noopener noreferrer">карта</a></>}</li>
+          <li key={i}><b lang={progLang()}>{p.city}: {p.name}</b><br /><small lang={progLang()}>{p.how}</small>{p.map && <> · <a class="tap44" href={p.map} target="_blank" rel="noopener noreferrer">{t('grp.map')}</a></>}</li>
         ))}
       </ul>
     </Card>
@@ -77,9 +78,9 @@ export function ProgramRows({ d }: { d: AppData }) {
   for (const r of d.program) { const k = r.date + ' ' + r.day; byDay.set(k, [...(byDay.get(k) || []), r]) }
   return (
     <Card>
-      <h3>Расписание группы</h3>
+      <h3>{t('grp.sched')}</h3>
       {[...byDay.entries()].map(([k, rows]) => (
-        <div key={k}>
+        <div key={k} lang={progLang()}>
           <div class="day-h"><b>{k}</b><small>{rows[0].city}</small></div>
           <div class="prog">
             {rows.map((r, i) => (
@@ -105,12 +106,12 @@ export function FullProgram() {
   return (
     <>
       <Card>
-        <h2>{p.title}</h2>
-        <p class="muted">{p.subtitle}</p>
-        <p><small>{p.group} · версия {p.version} · обновлено {p.updated}</small></p>
+        <h2 lang={progLang()}>{p.title}</h2>
+        <p class="muted" lang={progLang()}>{p.subtitle}</p>
+        <p><small><span lang={progLang()}>{p.group}</span> · {tf('grp.ver', { v: p.version, d: p.updated })}</small></p>
       </Card>
       {p.days.map(d => (
-        <Card key={d.id}>
+        <Card key={d.id} lang={progLang()}>
           <div class="day-h"><b>{d.date}</b><small>{d.city}{d.title ? ' · ' + d.title : ''}</small></div>
           <div class="prog">
             {d.items.map((it, i) => (
@@ -127,9 +128,9 @@ export function FullProgram() {
         </Card>
       ))}
       <Card cls="sand">
-        <h3>Входит</h3><ul class="list">{p.incl.map((x, i) => <li key={i}>{x}</li>)}</ul>
-        <h3>Не входит</h3><ul class="list">{p.excl.map((x, i) => <li key={i}>{x}</li>)}</ul>
-        {p.pay_rule && <p class="muted">{p.pay_rule}</p>}
+        <h3>{t('grp.incl')}</h3><ul class="list" lang={progLang()}>{p.incl.map((x, i) => <li key={i}>{x}</li>)}</ul>
+        <h3>{t('grp.excl')}</h3><ul class="list" lang={progLang()}>{p.excl.map((x, i) => <li key={i}>{x}</li>)}</ul>
+        {p.pay_rule && <p class="muted" lang={progLang()}>{p.pay_rule}</p>}
       </Card>
     </>
   )
@@ -148,11 +149,11 @@ export function Polls({ d, canVote }: { d: AppData; canVote: boolean }) {
   }
   return (
     <Card>
-      <h3>Голосования группы</h3>
+      <h3>{t('grp.polls')}</h3>
       {d.polls.map(p => (
         <div class="poll" key={p.id}>
           <p><b>{p.q}</b> <span class={'pill' + (p.open ? '' : ' red')}>{p.status}</span></p>
-          <small class="muted">до {p.endsTxt} · проголосовали {p.voted} из {p.total}{p.quorum ? ` · кворум ${p.quorum}` : ''}</small>
+          <small class="muted">{tf('grp.until', { d: p.endsTxt })} · {tf('grp.voted', { n: p.voted, m: p.total })}{p.quorum ? ' · ' + tf('grp.quorum', { q: p.quorum }) : ''}</small>
           {p.opts.map((o, i) => {
             const n = p.counts ? p.counts[i] : null
             const pct = n != null && p.voted ? Math.round((n / p.voted) * 100) : 0
@@ -164,8 +165,8 @@ export function Polls({ d, canVote }: { d: AppData; canVote: boolean }) {
               </button>
             )
           })}
-          {p.after && p.open && <small class="muted">Итоги покажем после закрытия</small>}
-          {!canVote && <small class="muted">Голосовать можно по личной ссылке паломника</small>}
+          {p.after && p.open && <small class="muted">{t('grp.after')}</small>}
+          {!canVote && <small class="muted">{t('grp.novote')}</small>}
         </div>
       ))}
     </Card>

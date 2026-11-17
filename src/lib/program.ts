@@ -100,3 +100,60 @@ export async function loadProgramData(): Promise<ProgramLoad> {
 export async function fetchProgram(): Promise<Program> {
   return (await loadProgramData()).program
 }
+
+/* ───── Связь пункта программы с шагом умры (кнопка «Шаги рядом» на «Сейчас») ─────
+   Программа пишется по-русски, но правила знают и казахские, и английские слова: id шага один на все языки,
+   а шаг на экране берётся из контента на языке интерфейса. Если пункт называет несколько шагов
+   («Умра всей группой: таваф, 2 ракаата, Замзам, сай, стрижка»), берём самый ранний по порядку умры —
+   экран «Сейчас» дальше сам пропустит уже отмеченные шаги. */
+
+/** id шагов умры в порядке контента (steps.json) */
+export const STEP_IDS = ['ghusl', 'ihram', 'rakat', 'niyya', 'talbiya', 'enter', 'tawaf', 'maqam', 'zamzam', 'sai', 'halq'] as const
+export type StepId = typeof STEP_IDS[number]
+
+/** Буквы — для границ слов: \b в JS не видит кириллицу и казахские буквы */
+const L = 'a-zа-яёәғқңөұүһі'
+const word = (s: string) => new RegExp(`(?<![${L}])(?:${s})`)
+
+interface StepRule {
+  id: StepId
+  /** слова шага */
+  re: RegExp
+  /** без этих слов рядом совпадение не считается («2 ракаата» — у ихрама или у Макама?) */
+  ctx?: RegExp
+  /** найденный шаг перекрывает эти («2 ракаата ихрама» — не шаг «ихрам») */
+  hides?: StepId[]
+  /** можно искать и в примечании m (там случайные упоминания: «Замзам 5 л — в аэропорту») */
+  inNote?: boolean
+}
+
+const RULES: StepRule[] = [
+  { id: 'ghusl', re: /гусль|ғұсыл|ghusl/, ctx: /ихрам|ihram|умр|umrah/ },
+  { id: 'ihram', re: /ихрам|ihram/, inNote: true },
+  { id: 'rakat', re: /ракаат|рәкағат|rak['‘’]?a/, ctx: /ихрам|ihram|намерени|ният|ниет|intention|niyy|тальби|тәлбия|talbiy|микат|миқат|miqat/, hides: ['ihram'], inNote: true },
+  { id: 'niyya', re: /намерени|ният|ниет|niyy|intention/, inNote: true },
+  { id: 'talbiya', re: /тальби|тәлбия|talbiy/, inNote: true },
+  { id: 'enter', re: word('умр[аыуе]|umrah?(?![a-z])|вход в мечеть|вход в харам|мешітке кір|enter(?:ing)? the mosque') },
+  { id: 'tawaf', re: /таваф|тауап|tawaf/, inNote: true },
+  { id: 'maqam', re: /макам|мақам|maqam/, hides: ['tawaf'] },
+  { id: 'zamzam', re: /замзам|зәмзәм|zamzam/ },
+  { id: 'sai', re: word(`са[йи](?![${L}])|сағи|сафа|марв|sa['‘’]?i(?![a-z])|safa|marwa`), inNote: true },
+  { id: 'halq', re: word('стрижк|постри|бритьё|бритье|побри|халк|шаш ал|шаш қырқ|шашты|haircut|shav|trim|halq|выход из ихрама'), hides: ['ihram'] },
+]
+
+/** Пункт не про сам обряд: урок, примерка, «пока не надеваем» */
+const NOT_RITE = /урок|примерк|пока не|сабақ|әзірге|lesson|fitting|not yet/
+
+function stepIn(text: string, note: boolean): StepId | null {
+  const s = text.toLowerCase()
+  if (!s.trim() || NOT_RITE.test(s)) return null
+  const found = RULES.filter(r => (!note || r.inNote) && r.re.test(s) && (!r.ctx || r.ctx.test(s)))
+  const hidden = new Set(found.flatMap(r => r.hides ?? []))
+  return found.find(r => !hidden.has(r.id))?.id ?? null
+}
+
+/** К какому шагу умры относится пункт программы: сначала по названию w, если там пусто — по примечанию m */
+export function stepFor(i: ProgramItem): StepId | null {
+  if (NOT_RITE.test(i.w.toLowerCase())) return null
+  return stepIn(i.w, false) ?? stepIn(i.m ?? '', true)
+}

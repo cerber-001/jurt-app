@@ -152,14 +152,5 @@ export function leftText(mins: number, h: string, m: string) {
   return (hh ? `${hh} ${h} ` : '') + `${mm} ${m}`
 }
 
-/** К какому шагу умры относится пункт программы (для кнопки «Шаги рядом») */
-export function stepFor(i: ProgramItem): string | null {
-  const s = (i.w + ' ' + (i.m || '')).toLowerCase()
-  if (/намерение|тальби|2 ракаата, намер/.test(s)) return 'rakat'
-  if (/умр[аы](?![а-яё])|умра всей|умра —/.test(s) && !/урок/.test(s)) return 'enter'
-  if (/таваф/.test(s)) return 'tawaf'
-  if (/ихрам/.test(s) && /гусль/.test(s)) return 'ghusl'
-  if (/ихрам/.test(s) && !/урок|примерка|пока не/.test(s)) return 'ihram'
-  if (/(?<![а-яё])сай(?![а-яё])|сафа|марв/.test(s)) return 'sai'
-  return null
-}
+// Связь пункта программы с шагом умры живёт в program.ts (находит все 11 шагов на ru/kk/en); здесь — прежний адрес для импортов
+export { stepFor } from './program'

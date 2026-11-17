@@ -7,7 +7,9 @@ import { loadProgramData, type Program, type ProgramDay } from '../lib/program'
 import { cityId, lang } from '../lib/store'
 import { weather, wmo, type Wx } from '../lib/weather'
 import { fmtDate, pick, progLang, t, tf } from '../lib/i18n'
+import { floorMinute, useMinuteTick } from '../lib/tick'
 import { Card } from './ui'
+import { useLater } from './live'
 
 /* Программа — одна на приложение. Первый раз грузится по запросу экрана, дальше тихо обновляется,
    когда вернулась сеть или паломник вернулся на вкладку (не чаще раза в минуту). */
@@ -56,12 +58,12 @@ export async function loadProgram() {
   return program.value
 }
 
-/** Одна спокойная строка: «Нет сети — показана сохранённая программа от ДД.ММ ЧЧ:ММ» */
+/** Одна спокойная строка: «Нет сети — показана сохранённая программа от ДД.ММ ЧЧ:ММ».
+    Живая область смонтирована всегда (пустая не занимает места), строка появляется в ней чуть позже — чтец её объявит */
 export function SavedNote() {
   const at = programSaved.value
-  if (at === null) return null
-  const text = at ? tf('prog.saved', { d: stamp(at) }) : t('prog.savednd')
-  return <p class="saved-note" role="status">{text}</p>
+  const live = useLater(at === null ? '' : at ? tf('prog.saved', { d: stamp(at) }) : t('prog.savednd'))
+  return <div role="status" aria-atomic="true">{live && <p class="saved-note">{live}</p>}</div>
 }
 
 function stamp(ms: number) {
@@ -92,10 +94,12 @@ export function useCity(day?: ProgramDay): City {
 }
 
 export function Today() {
-  const [now, setNow] = useState(new Date())
+  // живой отсчёт: перерисовка ровно на смене минуты (и при возврате на вкладку), «через N мин» не отстаёт от часов
+  const raw = new Date()
+  useMinuteTick(raw)
+  const now = floorMinute(raw)
   const [wx, setWx] = useState<Wx | null>(null)
   useEffect(() => { loadProgram() }, [])
-  useEffect(() => { const id = setInterval(() => setNow(new Date()), 30_000); return () => clearInterval(id) }, [])
 
   const local = isoAt(now, -now.getTimezoneOffset() / 60)
   const picked = pickDay(program.value, local)

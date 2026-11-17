@@ -1,6 +1,7 @@
 /* Экран паломника — гид 1.0: нижнее меню из 4 пунктов: Сейчас · Путь · Группа · Ещё.
    «Программа» открывается из «Сейчас» и из «Ещё»; дуа, зикр, намаз, карта, сборы — в «Ещё».
-   Адреса: #now #path #group #more #more/<раздел> #program. Старые адреса (#today, #umra, #dua…) ведут в новые места. */
+   Адреса: #now #path #group #more #more/<раздел> #program. Старые адреса (#today, #umra, #dua…) ведут в новые места.
+   1.1: смена раздела — плавный переход View Transitions (lib/transition.ts); без поддержки или при «Уменьшить движение» — сразу. */
 import { useEffect, useRef, useState } from 'preact/hooks'
 import { useSignal } from '@preact/signals'
 import { Announcement, GroupCard, MeCard, Points, Polls } from '../components/group'
@@ -8,10 +9,14 @@ import { Lost, lostOpen } from '../components/lost'
 import { Nearby, nearby } from '../components/nearby'
 import { More, Now, ProgramNow } from '../components/now'
 import { Path } from '../components/path'
+import { Finale, finale } from '../components/finale'
+import { Reader, reading } from '../components/reader'
 import { Card, Top } from '../components/ui'
 import { t } from '../lib/i18n'
+import { runTransition, tabKind } from '../lib/transition'
 import { code, data, error, groupCode, lang, loading, readUrlCodes, refresh } from '../lib/store'
 import { watchNotes } from '../lib/notes'
+import { isGroupCode } from '../lib/codes'
 
 const NAV = ['now', 'path', 'group', 'more'] as const
 const PAGES: readonly string[] = [...NAV, 'program']
@@ -27,6 +32,13 @@ function norm(h: string): string {
   return a === 'more' && b ? 'more/' + b : a
 }
 
+/** Порядок раздела для направления перехода: по нижнему меню слева направо; подраздел и «Программа» — на шаг глубже */
+function rank(r: string): number {
+  const [a, b] = r.split('/')
+  if (a === 'program') return 1
+  return NAV.indexOf(a as typeof NAV[number]) * 10 + (b ? 1 : 0)
+}
+
 function setHash(r: string) {
   const url = location.pathname + location.search + '#' + r
   if (location.pathname + location.search + location.hash !== url) history.replaceState(null, '', url)
@@ -36,8 +48,15 @@ export function Pilgrim() {
   const route = useSignal(norm(location.hash))
   const mainRef = useRef<HTMLElement>(null)
   const firstRoute = useRef(true)
-  // адрес меняем сразу, а не в эффекте: useDialog при закрытии окна сверяет адрес и не откатывает переход
-  const go = (h: string) => { route.value = norm(h); setHash(route.value); scrollTo(0, 0) }
+  // адрес меняем сразу, а не в эффекте и не внутри перехода: useDialog при закрытии окна сверяет адрес
+  // и не откатывает переход. Сам экран меняется внутри плавного перехода (если он есть)
+  const go = (h: string) => {
+    const r = norm(h)
+    setHash(r)
+    const show = () => { route.value = r; scrollTo(0, 0) }
+    if (r === route.value) show()
+    else runTransition(show, tabKind(rank(route.value), rank(r)))
+  }
   useEffect(() => {
     readUrlCodes(); refresh()
     const onTab = (e: Event) => go((e as CustomEvent<string>).detail)
@@ -52,7 +71,7 @@ export function Pilgrim() {
     if (firstRoute.current) { firstRoute.current = false; return }
     mainRef.current?.focus({ preventScroll: true })
   }, [route.value])
-  const overlay = !!nearby.value || lostOpen.value
+  const overlay = !!nearby.value || lostOpen.value || finale.value || !!reading.value
   const d = data.value
   void lang.value  // перерисовка при смене языка
   const [main, sub = ''] = route.value.split('/')
@@ -71,6 +90,8 @@ export function Pilgrim() {
       <BottomNav cur={main === 'program' ? 'now' : main} go={go} inert={overlay} />
       <Nearby />
       <Lost go={go} />
+      <Reader />
+      <Finale />
     </>
   )
 }
@@ -81,7 +102,7 @@ function GroupTab() {
   function enter(e: Event) {
     e.preventDefault()
     const v = input.trim()
-    if (/^[A-Za-z]+-\d{3,5}$/.test(v)) { groupCode.value = v.toUpperCase(); code.value = '' } else code.value = v.toLowerCase()
+    if (isGroupCode(v)) { groupCode.value = v.toUpperCase(); code.value = '' } else code.value = v.toLowerCase()
     refresh()
   }
   return (

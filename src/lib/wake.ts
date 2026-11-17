@@ -12,7 +12,13 @@ export function keepAwake(): () => void {
     const wake = (navigator as WakeNavigator).wakeLock
     if (!wake) return
     wake.request('screen').then(
-      l => { if (stopped) void l.release().catch(() => undefined); else lock = l },
+      l => {
+        if (stopped) { void l.release().catch(() => undefined); return }
+        // прежняя блокировка (если система её не отпустила сама) не должна остаться висеть
+        const old = lock
+        lock = l
+        if (old && old !== l) void old.release().catch(() => undefined)
+      },
       () => { /* телефон отказал (режим энергосбережения) — работаем как обычно */ },
     )
   }

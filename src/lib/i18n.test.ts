@@ -1,14 +1,13 @@
 import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, test } from 'vitest'
-import { LANGS, fmtDate, pick, t } from './i18n'
+import { LANGS, STRINGS, fmtDate, pick, t } from './i18n'
 import { lang } from './store'
 
-/* Словарь S в i18n.ts не экспортируется. Чтобы проверить его полноту, не трогая исходник,
-   вынимаем литерал объекта из текста файла и вычисляем его отдельно. */
-const SRC = readFileSync(new URL('./i18n.ts', import.meta.url), 'utf8')
-const START = SRC.indexOf('const S: Record<string, [string, string, string]> = {')
-const LITERAL = SRC.slice(SRC.indexOf('{', START), SRC.indexOf('\n}\n', START) + 2)
-const DICT = new Function('return ' + LITERAL)() as Record<string, string[]>
+/* Весь словарь: основная часть i18n.ts и строки 1.1 из strings.*.ts */
+const DICT = STRINGS as Record<string, readonly string[]>
+/* Текст всех файлов словаря — для поиска повторов ключей (в объекте повтор молча перезаписывает значение) */
+const LITERAL = ['./i18n.ts', './strings.speed.ts', './strings.flow.ts', './strings.rite.ts']
+  .map(f => readFileSync(new URL(f, import.meta.url), 'utf8')).join('\n')
 const CYR = /[А-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/
 
 afterEach(() => { lang.value = 'ru' })

@@ -6,6 +6,7 @@ import { done, ls, toggleDone } from '../lib/store'
 import { Card, Html, Icon } from './ui'
 import { pick, t, tf } from '../lib/i18n'
 import { Notes } from './notes'
+import { reading } from './reader'
 
 type Mode = 'first' | 'again' | 'mecca'
 const modeLS = 'jurt.mode'
@@ -108,7 +109,9 @@ export function DuaCard({ d }: { d: Dua }) {
         <span class="ico"><Icon id={d.icon} size={24} /></span>
         <span class="st"><b>{d.title}</b>{!open && <span class="pv">{d.preview}</span>}</span>
       </button>
-      {open && <div class="acc-b"><div class="acc-wrap"><div class="acc-in"><Html html={d.html} /><Notes id={'dua:' + d.id} /></div></div></div>}
+      {open && <div class="acc-b"><div class="acc-wrap"><div class="acc-in">
+        {d.items?.length > 0 && <button class="btn ghost sm read-go" onClick={() => { reading.value = { title: d.title, items: d.items } }}>{t('read.open')}</button>}
+        <Html html={d.html} /><Notes id={'dua:' + d.id} /></div></div></div>}
     </section>
   )
 }

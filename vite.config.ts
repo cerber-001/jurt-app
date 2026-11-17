@@ -6,7 +6,9 @@ export default defineConfig({
   plugins: [
     preact(),
     VitePWA({
-      registerType: 'autoUpdate',
+      // 1.1: prompt — новая версия скачивается в фоне и ждёт, пока паломник нажмёт «Обновить» на плашке.
+      // autoUpdate перезагружал бы страницу сам, в том числе посреди тавафа.
+      registerType: 'prompt',
       includeAssets: ['fonts/*.woff2', '*.png', 'logo-white.svg'],
       manifest: {
         name: 'JURT · Платформа паломника',
@@ -28,6 +30,9 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: '/index.html',
+        // первая установка: офлайн-копия берёт страницу под контроль сразу, без второго открытия.
+        // Обновления этим не ускоряются — новая версия всё равно ждёт нажатия «Обновить».
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,json}'],
         runtimeCaching: [
           {

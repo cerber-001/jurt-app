@@ -1,5 +1,7 @@
 /* Экран «Сейчас»: одна большая карточка с одним главным действием и три быстрые плитки под ней.
-   Здесь же «Программа» (сегодня с подсветкой) и меню «Ещё». Время — clock.ts (с демо ?at=). */
+   Здесь же «Программа» (сегодня с подсветкой) и меню «Ещё». Время — clock.ts (с демо ?at=);
+   экран перерисовывается ровно на смене минуты (tick.ts), поэтому часы и «через N мин» до намаза идут живо.
+   Что в карточке — hero-view.ts, как она выглядит и сменяется — hero.tsx. */
 import { useEffect } from 'preact/hooks'
 import { PackList, Stories } from './extras'
 import { DayPlan, SavedNote, Today, loadProgram, program, programError, useCity } from './today'
@@ -11,35 +13,27 @@ import { nearby } from './nearby'
 import { Where } from './where'
 import { InstallGuide, InstallHint } from './install'
 import { Card, Glyph, Icon } from './ui'
-import { demo, leftText, slots, stepFor, tzOf, useNow, wall, where, type Phase } from '../lib/clock'
-import { content, loadContent, type Step } from '../lib/content'
+import { Hero } from './hero'
+import { heroView, type HeroEnv } from './hero-view'
+import { demo, leftText, tzOf, useNow, wall, where } from '../lib/clock'
+import { loadContent } from '../lib/content'
 import { cityByName, hhmm, next } from '../lib/prayer'
-import { data, done } from '../lib/store'
+import { dayPart, type DayPart } from '../lib/daypart'
+import { floorMinute, useMinuteTick } from '../lib/tick'
+import { data } from '../lib/store'
 import { fmtDate, progLang, t } from '../lib/i18n'
-import type { ProgramDay, ProgramItem } from '../lib/program'
+import type { ProgramDay } from '../lib/program'
 
 type Go = (h: string) => void
-type DayPhase = Extract<Phase, { kind: 'day' }>
-type BeforePhase = Extract<Phase, { kind: 'before' }>
-
-/** Главная кнопка карточки: одна на экран */
-interface Cta { over: string; title: string; icon?: string; solid: boolean; run: () => void }
-/** Что показывает карточка «Сейчас» */
-interface HeroView {
-  kicker: string; title: string; small?: boolean
-  /** заголовок — строка программы (она всегда на русском) */
-  prog?: boolean
-  time?: string; place?: string; note?: string; pay?: string
-  cta: Cta
-  next?: { over: string; text: string }
-}
-
-/** Заголовок длиннее — набираем мельче, чтобы главная кнопка и плитки остались на первом экране */
-const LONG_TITLE = 40
 
 const hm = (m: number) => hhmm(((m % 1440) + 1440) % 1440)
 const left = (m: number) => leftText(m, t('today.h'), t('today.m'))
-const line = (i: ProgramItem) => `${i.t} — ${i.w}`
+
+/** Текущее время с точностью до минуты; компонент сам перерисуется на следующей минуте */
+function useMinuteNow(raw: Date): Date {
+  useMinuteTick(raw)
+  return floorMinute(raw)
+}
 
 /* ───────── Сейчас ───────── */
 
@@ -61,119 +55,32 @@ function FreshAnnouncement({ text }: { text: string }) {
 export function Now({ go }: { go: Go }) {
   useEffect(() => { loadProgram(); loadContent() }, [])
   const p = program.value
-  const now = useNow(p)
+  const now = useMinuteNow(useNow(p))
   const d = data.value
   const ann = d?.announcement?.text ? d.announcement : null
   if (!p) return programError.value ? <p class="err" role="alert">{programError.value}</p> : <Card><div class="sk" /></Card>
   const ph = where(p, now)
   const day = ph.kind === 'day' ? ph.day : ph.kind === 'before' ? ph.first : ph.last
   const tz = tzOf(day), w = wall(now, tz)
+  const city = cityByName(day.city)
+  const part: DayPart = city ? dayPart(now, w.min, city) : 'day'
+  const env: HeroEnv = { go, openStep: id => { nearby.value = id } }
 
   return (
     <>
       {demo && <p class="demo-chip">{t('now.demo')}: {fmtDate(w.iso)} {hm(w.min)} · UTC{tz >= 0 ? '+' : ''}{tz}</p>}
       {ann && isFresh(ann.at, now) && <FreshAnnouncement text={ann.text} />}
-      <Hero v={heroView(ph, w.min, go)} go={go} />
-      {/* полное объявление — под главной карточкой: иначе на телефоне оно выталкивает «Открыть шаг» под нижнее меню */}
-      {d && ann ? <div id={ANN_ID}><Announcement d={d} /></div> : null}
-      <Quick day={day} now={now} go={go} />
-      <SavedNote />
-      <InstallHint go={go} />
-      {!d && <p class="muted"><small>{t('now.nocode')}</small></p>}
+      <Hero v={heroView(ph, w.min, env)} part={part} go={go} />
+      {/* всё под карточкой — одним слоем: при смене пункта он плавно переезжает вслед за высотой карточки */}
+      <div class="now-below">
+        {/* полное объявление — под главной карточкой: иначе на телефоне оно выталкивает «Открыть шаг» под нижнее меню */}
+        {d && ann ? <div id={ANN_ID}><Announcement d={d} /></div> : null}
+        <Quick day={day} now={now} go={go} />
+        <SavedNote />
+        <InstallHint go={go} />
+        {!d && <p class="muted"><small>{t('now.nocode')}</small></p>}
+      </div>
     </>
-  )
-}
-
-function heroView(ph: Phase, wmin: number, go: Go): HeroView {
-  if (ph.kind === 'before') return beforeView(ph, go)
-  if (ph.kind === 'after') return afterView(go)
-  return ph.cur === -2 ? restView(ph, wmin, go) : dayView(ph, wmin, go)
-}
-
-function beforeView(ph: BeforePhase, go: Go): HeroView {
-  const first = slots(ph.first)[0]
-  return {
-    kicker: t('now.before'),
-    title: `${ph.days} ${t('now.days')}`,
-    place: `${fmtDate(ph.first.date)} · ${ph.first.city}`,
-    cta: { over: t('now.getready'), title: t('now.pack'), icon: 'i-plane', solid: true, run: () => go('more/pack') },
-    next: first ? { over: fmtDate(ph.first.date), text: line(first.i) } : undefined,
-  }
-}
-
-function afterView(go: Go): HeroView {
-  return {
-    kicker: '', title: t('now.after'), small: true, note: t('now.after2'),
-    cta: { over: '', title: t('more.dua'), icon: 'b-dua', solid: false, run: () => go('more/dua') },
-  }
-}
-
-/** На сегодня всё: показываем, с чего начнётся завтра */
-function restView(ph: DayPhase, wmin: number, go: Go): HeroView {
-  const tm = ph.tomorrow
-  const first = tm ? slots(tm)[0] : undefined
-  return {
-    kicker: `${hm(wmin)} · ${ph.day.city}`, title: t('now.dayover'), small: true,
-    cta: { over: '', title: t('nav.program'), solid: false, run: () => go('program') },
-    next: tm && first ? { over: `${t('now.tomorrow')} · ${fmtDate(tm.date)} · ${tm.city}`, text: line(first.i) } : undefined,
-  }
-}
-
-function dayView(ph: DayPhase, wmin: number, go: Go): HeroView {
-  const { list, cur, nxt, min, day } = ph
-  const isNow = cur >= 0
-  const main = isNow ? list[cur] : list[nxt]
-  if (!main) return restView(ph, wmin, go)
-  const nx = nxt >= 0 ? list[isNow ? nxt : nxt + 1] : undefined
-  const step = stepTarget(stepFor(main.i))
-  return {
-    kicker: `${isNow ? t('now.now') : t('now.next')} · ${hm(wmin)} · ${day.city}`,
-    time: main.i.t + (isNow ? '' : ` · ${t('now.in')} ${left(main.s - min)}`),
-    title: main.i.w,
-    prog: true,
-    small: main.i.w.length > LONG_TITLE,
-    place: [main.i.p, main.i.tr, main.i.who].filter(Boolean).join(' · '),
-    note: main.i.m,
-    pay: main.i.pay,
-    cta: step
-      ? { over: t('now.openstep'), title: `${step.num}. ${step.title}`, icon: step.icon, solid: true, run: () => { nearby.value = step.id } }
-      : { over: '', title: t('now.daybtn'), solid: false, run: () => go('program') },
-    next: nx ? { over: `${t('now.next')} · ${t('now.in')} ${left(nx.s - min)}`, text: line(nx.i) } : undefined,
-  }
-}
-
-/** Шаг умры для пункта программы: первый ещё не отмеченный, начиная с найденного */
-function stepTarget(id: string | null): Step | null {
-  const steps = content.value?.steps
-  if (!id || !steps) return null
-  const from = steps.findIndex(s => s.id === id)
-  if (from < 0) return null
-  return steps.slice(from).find(s => !done.value[s.id]) ?? steps[from]
-}
-
-function Hero({ v, go }: { v: HeroView; go: Go }) {
-  const c = v.cta
-  const pl = progLang()
-  return (
-    <section class="hero">
-      {v.kicker && <div class="hero-k">{v.kicker}</div>}
-      {v.time && <div class="hero-t">{v.time}</div>}
-      <h1 class={'hero-h' + (v.small ? ' sm' : '')} lang={v.prog ? pl : undefined}>{v.title}</h1>
-      {v.place && <p class="hero-w" lang={pl}>{v.place}</p>}
-      {v.note && <p class="hero-m" lang={pl}>{v.note}</p>}
-      {v.pay && <p class="hero-m pay" lang={pl}>{v.pay}</p>}
-      <button class={'cta' + (c.solid ? ' solid' : '')} onClick={c.run}>
-        {c.icon && <Icon id={c.icon} size={34} />}
-        <span>{c.over && <small>{c.over}</small>}<b>{c.title}</b></span>
-        <i aria-hidden="true">›</i>
-      </button>
-      {v.next && (
-        <button class="hero-next" onClick={() => go('program')}>
-          <span><small>{v.next.over}</small><span lang={pl}>{v.next.text}</span></span>
-          <i aria-hidden="true">›</i>
-        </button>
-      )}
-    </section>
   )
 }
 
@@ -206,7 +113,7 @@ function Quick({ day, now, go }: { day: ProgramDay; now: Date; go: Go }) {
 export function ProgramNow() {
   useEffect(() => { loadProgram() }, [])
   const p = program.value
-  const now = useNow(p)
+  const now = useMinuteNow(useNow(p))
   if (!p) return programError.value ? <p class="err" role="alert">{programError.value}</p> : <Card><div class="sk" /></Card>
   const ph = where(p, now)
   const pl = progLang()

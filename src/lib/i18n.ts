@@ -2,11 +2,14 @@
    носителем (как в v2). Тексты гида (шаги, дуа, зикр) берутся из контента, здесь — только интерфейс. */
 import { effect } from '@preact/signals'
 import { lang, type Lang } from './store'
+import { S_SPEED } from './strings.speed'
+import { S_FLOW } from './strings.flow'
+import { S_RITE } from './strings.rite'
 
 export const LANGS: [Lang, string][] = [['ru', 'Рус'], ['kk', 'Қаз'], ['en', 'Eng']]
 
 // [ru, kk, en]
-const S: Record<string, [string, string, string]> = {
+const BASE: Record<string, [string, string, string]> = {
   'role.pilgrim': ['паломник', 'қажы', 'pilgrim'],
   'app.guide': ['Гид паломника', 'Қажы жолсерігі', 'Pilgrim guide'],
   'app.entercode': ['введите код', 'кодты енгізіңіз', 'enter your code'],
@@ -224,6 +227,27 @@ const S: Record<string, [string, string, string]> = {
   'rnd.sai.all': ['Все 7 отрезков · аль-хамду ли-Ллях', '7 бөлік толық · әлхамдулиллаһ', 'All 7 laps · alhamdulillah'],
   'rnd.undo': ['Убрать один', 'Біреуін алу', 'Undo one'],
   'rnd.reset': ['Сначала', 'Басынан', 'Restart'],
+  // гид 1.1 «WOW»: таваф «как часы», финал умры, дуа для чтения
+  'rnd.snd': ['Тихий звук на каждый круг', 'Әр айналымда ақырын дыбыс', 'Soft sound each round'],
+  'fin.tawaf.k': ['Таваф завершён', 'Тауап аяқталды', 'Tawaf complete'],
+  'fin.sai.k': ['Сай завершён', 'Сағи аяқталды', 'Sa‘i complete'],
+  'fin.next': ['Дальше', 'Келесі', 'Next'],
+  'fin.go': ['К шагу {n}', '{n}-қадамға өту', 'Go to step {n}'],
+  'umra.k': ['Умра завершена', 'Умра аяқталды', 'Umrah complete'],
+  'umra.h': ['Пусть Аллах примет вашу умру', 'Алла умраңызды қабыл етсін', 'May Allah accept your umrah'],
+  'umra.lbl': ['Дуа Ибрахима и Исмаила (мир им), когда они закладывали основы Дома', 'Ибраһим мен Исмаилдың (оларға сәлем) Үйдің негізін қалағандағы дұғасы', 'The prayer of Abraham and Ishmael (peace be upon them) as they raised the foundations of the House'],
+  'umra.tr': ['Ра́ббана́ такабба́ль ми́нна́, и́ннака а́нта-с-Сами́‘у-ль-‘Али́м', 'Ра́ббана́ такабба́ль ми́нна́, и́ннака а́нта-с-Сами́‘у-ль-‘Али́м', 'Rabbanā taqabbal minnā, innaka anta-s-Samī‘u-l-‘Alīm'],
+  'umra.mean': ['«Господи наш! Наш Творец! Прими от нас это. Ведь Ты слышишь нашу молитву и знаешь наши сокровенные желания!»', '«Господи наш! Наш Творец! Прими от нас это. Ведь Ты слышишь нашу молитву и знаешь наши сокровенные желания!»', '‘Our Lord, accept [this] from us. You are the All Hearing, the All Knowing.’'],
+  'umra.src': ['Коран 2:127 · перевод смыслов: Министерство вакуфов Египта', 'Құран 2:127 · мағына аудармасы (орысша): Мысыр Уақыф министрлігі', 'Quran 2:127 · translation of meanings: M. A. S. Abdel Haleem'],
+  'umra.p': ['Отдохните. Дуа и зикры остаются с вами здесь, в гиде.', 'Демалыңыз. Дұғалар мен зікірлер осында, жолсерікте сізбен бірге.', 'Rest now. Duas and dhikr stay with you here in the guide.'],
+  'umra.close': ['Вернуться в гид', 'Жолсерікке оралу', 'Back to the guide'],
+  'read.open': ['Читать крупно', 'Ірі әріппен оқу', 'Read in large text'],
+  'read.smaller': ['Мельче', 'Кішірек', 'Smaller'],
+  'read.bigger': ['Крупнее', 'Үлкенірек', 'Larger'],
+  'read.night': ['Ночная подсветка', 'Түнгі жарық', 'Night light'],
+  'read.tr': ['Транскрипция', 'Транскрипция', 'Transliteration'],
+  'read.mean': ['Смысл', 'Мағынасы', 'Meaning'],
+  'read.show': ['показать', 'көрсету', 'show'],
   'rnd.resetq': ['Начать счёт заново?', 'Санауды басынан бастау керек пе?', 'Restart the count?'],
   'rnd.skip': ['Дальше без счёта', 'Санамай әрі қарай', 'Next without counting'],
   'lost.btn': ['Я потерялся', 'Адасып қалдым', 'I am lost'],
@@ -262,6 +286,11 @@ const S: Record<string, [string, string, string]> = {
   'st.план': ['план', 'жоспар', 'planned'], 'st.набор': ['набор группы', 'топ жинақталуда', 'enrolling'],
   'st.идёт': ['идёт сейчас', 'жүріп жатыр', 'ongoing'], 'st.завершена': ['завершена', 'аяқталды', 'completed'],
 }
+
+// Строки версии 1.1 — по файлу на направление (так параллельная работа не задевает один файл)
+/** Весь словарь [ru, kk, en] — экспортируется для проверки полноты в i18n.test.ts */
+export const STRINGS: Readonly<Record<string, readonly [string, string, string]>> = { ...BASE, ...S_SPEED, ...S_FLOW, ...S_RITE }
+const S = STRINGS
 
 const IDX: Record<Lang, 0 | 1 | 2> = { ru: 0, kk: 1, en: 2 }
 

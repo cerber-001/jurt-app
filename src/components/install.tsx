@@ -7,6 +7,7 @@ import { signal } from '@preact/signals'
 import { t } from '../lib/i18n'
 import { ls } from '../lib/store'
 import { Card } from './ui'
+import { savedOffline } from './update'
 
 /** Событие Chrome/Android «можно установить»: приходит один раз при загрузке, поэтому ловим его сразу при импорте модуля */
 interface InstallPromptEvent extends Event { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }> }
@@ -116,6 +117,7 @@ export function InstallGuide() {
       <h1>{t('more.install')}</h1>
       {kind !== 'standalone' && <p>{t('a2.why')}</p>}
       <Body kind={kind} />
+      {savedOffline() && <p class="upd-kept">{t('upd.saved')} <small class="muted">{t('upd.offline')}</small></p>}
     </Card>
   )
 }

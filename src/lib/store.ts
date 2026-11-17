@@ -1,6 +1,7 @@
 /* Состояние приложения на сигналах. Личный код и ключ штаба — только в localStorage устройства. */
 import { signal, computed, effect } from '@preact/signals'
 import { fetchApp, ApiFail, setApiMode } from './api'
+import { groupCodeOrEmpty } from './codes'
 import type { AppData } from './types'
 
 const LS = {
@@ -15,7 +16,7 @@ export const ls = {
 export type Lang = 'ru' | 'kk' | 'en'
 export const lang = signal<Lang>((ls.get(LS.lang) as Lang) || 'ru')
 export const code = signal(ls.get(LS.code))          // личный код паломника (?p=)
-export const groupCode = signal(ls.get(LS.group))    // код группы (?g=)
+export const groupCode = signal(groupCodeOrEmpty(ls.get(LS.group)))    // код группы (?g=); не похожее на код — не берём
 export const adminKey = signal(ls.get(LS.key))       // ключ штаба Apps Script — вводится вручную организатором
 export const v3Key = signal(ls.get(LS.v3))           // ключ v3 (Supabase): роль admin или ustaz, см. v3.ts
 export const cityId = signal(ls.get(LS.city))        // город для намаза/погоды, выбранный вручную ('' = по программе)
@@ -43,7 +44,9 @@ export function readUrlCodes() {
   const q = new URLSearchParams(location.search)
   const p = q.get('p'), g = q.get('g'), a = q.get('api')
   if (p) code.value = p.trim().toLowerCase()
-  if (g) groupCode.value = g.trim().toUpperCase()
+  // ?g= уходит в фильтры Supabase — берём только то, что похоже на код группы (UMRA-0010), остальное молча пропускаем
+  const grp = groupCodeOrEmpty(g)
+  if (grp) groupCode.value = grp
   if (a) setApiMode(a.trim().toLowerCase())
 }
 
@@ -51,7 +54,8 @@ export async function refresh() {
   loading.value = true; error.value = ''
   try {
     data.value = await fetchApp({ p: code.value || undefined, g: groupCode.value || undefined })
-    if (data.value.group?.code) groupCode.value = data.value.group.code
+    const grp = groupCodeOrEmpty(data.value.group?.code)
+    if (grp) groupCode.value = grp
   } catch (e) {
     error.value = e instanceof ApiFail ? e.message : 'Нет связи. Показаны сохранённые данные.'
     if (e instanceof ApiFail && /код|ссылка/i.test(e.message)) code.value = ''

@@ -18,6 +18,26 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>JURT · Платформа паломника</title>
+    <!-- 1.1: программа тура приходит с другого адреса — соединение готовим заранее -->
+    <link rel="preconnect" href="https://umra.jurt.kz" crossorigin />
+    <!-- 1.1: тексты гида и программу для экрана «Сейчас» начинаем качать вместе со скриптом, а не после него.
+         Язык — из настроек на телефоне (как в store.ts); адреса — как в src/lib/content.ts и src/lib/program.ts.
+         Программу заранее берём только при первом открытии: если копия уже на телефоне (jurt.program), экран рисуется
+         из неё, а свежую версию program.ts спрашивает сам, без кэша браузера. -->
+    <script>
+      (function () {
+        function get(key) { try { return localStorage.getItem(key) || '' } catch (e) { return '' } }
+        function preload(href) {
+          var k = document.createElement('link')
+          k.rel = 'preload'; k.as = 'fetch'; k.crossOrigin = 'anonymous'; k.href = href
+          document.head.appendChild(k)
+        }
+        var l = get('jurt.lang')
+        var dir = l === 'kk' || l === 'en' ? l + '/' : ''
+        ;['steps', 'info', 'dua', 'zikr', 'modes'].forEach(function (n) { preload('/content/' + dir + n + '.json') })
+        if (!get('jurt.program')) preload('%VITE_PROGRAM_URL%')
+      })()
+    </script>
   </head>
   <body>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#005A5C"/><stop offset="1" stop-color="#F07A1E"/></linearGradient></defs></svg>

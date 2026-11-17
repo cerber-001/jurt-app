@@ -191,7 +191,12 @@ button.acc-h{width:100%;border:0;background:none;color:inherit;font:inherit;text
 
 /* ───── Шапка: длинное название группы — в две строки и мельче; переключатель языка — 44×44 ───── */
 .top .ttl b{white-space:normal;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow-wrap:anywhere}
-.top .ttl.long b{font-size:.88rem;line-height:1.15}
+.top .ttl.long b{font-size:.84rem;line-height:1.1}
+/* Шапка одной высоты, что бы ни пришло из сети (CLS 0): название — не больше двух строк, подзапись — одна строка;
+   блок заранее держит высоту самого высокого варианта (две строки по 1rem + подзапись), содержимое — по центру */
+.top .ttl{display:flex;flex-direction:column;justify-content:center;min-height:3.2rem}
+.top .ttl b{line-height:1.12}
+.top .ttl small{line-height:1.25}
 .lang{gap:0;margin-left:.2rem}
 .lang button{min-width:44px;min-height:44px;padding:0 .2rem;border:0;border-radius:12px;font-size:.78rem;background:transparent;position:relative}
 .lang button.on{background:#fff}

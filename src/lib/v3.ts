@@ -1,7 +1,9 @@
 /* Данные v3 в Supabase (этап 1): витрина поездок и обезличенные заметки устаза к блокам гида.
    Чтение — анонимное (RLS: только публичные поездки). Запись — RPC с ключом v3; хеш ключа
-   лежит в private.v3_keys, в браузере ключ хранится локально, как ключ штаба Apps Script. */
-import { supabase } from './supabase'
+   лежит в private.v3_keys, в браузере ключ хранится локально, как ключ штаба Apps Script.
+   1.1: клиент Supabase берётся через getSupabase() — библиотека подгружается при первом запросе. */
+import { getSupabase } from './supabase'
+import { groupCodeOrEmpty } from './codes'
 
 export interface Trip {
   id: string; code: string; title: string; dep: string | null; ret: string | null
@@ -21,52 +23,76 @@ function fail(e: { message?: string } | null): never {
 }
 
 export async function listTrips(): Promise<Trip[]> {
-  const { data, error } = await supabase.from('trips').select('*').order('sort').order('dep', { ascending: false })
+  const { data, error } = await (await getSupabase()).from('trips').select('*').order('sort').order('dep', { ascending: false })
   if (error) fail(error)
   return (data || []) as Trip[]
 }
 export async function getTrip(code: string): Promise<Trip | null> {
-  const { data, error } = await supabase.from('trips').select('*').eq('code', code.toUpperCase()).maybeSingle()
+  const { data, error } = await (await getSupabase()).from('trips').select('*').eq('code', code.toUpperCase()).maybeSingle()
   if (error) fail(error)
   return (data as Trip) || null
 }
 /** Заметки устаза: общие (trip_code null) + для данной поездки */
 export async function listNotes(trip?: string): Promise<UstazNote[]> {
+  const supabase = await getSupabase()
   let q = supabase.from('ustaz_notes').select('*').order('updated_at', { ascending: false })
-  q = trip ? q.or(`trip_code.is.null,trip_code.eq.${trip.toUpperCase()}`) : q.is('trip_code', null)
+  // код подставляется в строку фильтра .or() — только проверенный код группы, иначе — только общие заметки
+  const code = groupCodeOrEmpty(trip)
+  q = code ? q.or(`trip_code.is.null,trip_code.eq.${code}`) : q.is('trip_code', null)
   const { data, error } = await q
   if (error) fail(error)
   return (data || []) as UstazNote[]
 }
 
 export async function whoami(k: string): Promise<V3Role> {
-  const { data, error } = await supabase.rpc('v3_whoami', { k })
+  const { data, error } = await (await getSupabase()).rpc('v3_whoami', { k })
   if (error) fail(error)
   return (data as V3Role) || null
 }
 /** Все поездки, включая скрытые — только организатору (ключ v3 admin) */
 export async function listTripsAll(k: string): Promise<Trip[]> {
-  const { data, error } = await supabase.rpc('v3_trips_all', { k })
+  const { data, error } = await (await getSupabase()).rpc('v3_trips_all', { k })
   if (error) fail(error)
   return (data || []) as Trip[]
 }
 export async function tripUpsert(k: string, t: Partial<Trip> & { code: string; title: string }): Promise<Trip> {
-  const { data, error } = await supabase.rpc('v3_trip_upsert', { k, t })
+  const { data, error } = await (await getSupabase()).rpc('v3_trip_upsert', { k, t })
   if (error) fail(error)
   return data as Trip
 }
 export async function noteSet(k: string, n: Partial<UstazNote> & { block_id: string; body: string }): Promise<UstazNote> {
-  const { data, error } = await supabase.rpc('v3_note_set', { k, n })
+  const { data, error } = await (await getSupabase()).rpc('v3_note_set', { k, n })
   if (error) fail(error)
   return data as UstazNote
 }
 export async function noteDelete(k: string, id: string): Promise<boolean> {
-  const { data, error } = await supabase.rpc('v3_note_delete', { k, note_id: id })
+  const { data, error } = await (await getSupabase()).rpc('v3_note_delete', { k, note_id: id })
   if (error) fail(error)
   return !!data
 }
-/** Живое обновление заметок (Realtime) — вернуть функцию отписки */
-export function onNotes(cb: () => void) {
-  const ch = supabase.channel('ustaz_notes').on('postgres_changes', { event: '*', schema: 'public', table: 'ustaz_notes' }, cb).subscribe()
-  return () => { supabase.removeChannel(ch) }
+/** Живое обновление заметок (Realtime) — вернуть функцию отписки. Подписка начнётся, когда загрузится клиент;
+    отписка до этого момента просто отменяет её. Без сети библиотека может не загрузиться — тогда пробуем ещё раз,
+    один раз, когда сеть вернётся (событие online); до тех пор заметки — из последней загрузки. */
+export function onNotes(cb: () => void): () => void {
+  let stop: (() => void) | null = null
+  let cancelled = false
+  let retried = false
+  const retry = () => { if (!cancelled) start() }
+  const start = () => {
+    getSupabase().then(supabase => {
+      if (cancelled) return
+      const ch = supabase.channel('ustaz_notes').on('postgres_changes', { event: '*', schema: 'public', table: 'ustaz_notes' }, cb).subscribe()
+      stop = () => { supabase.removeChannel(ch) }
+    }).catch(() => {
+      if (cancelled || retried || typeof addEventListener !== 'function') return
+      retried = true
+      addEventListener('online', retry, { once: true })
+    })
+  }
+  start()
+  return () => {
+    cancelled = true
+    if (typeof removeEventListener === 'function') removeEventListener('online', retry)
+    stop?.()
+  }
 }
