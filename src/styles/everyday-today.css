@@ -1,0 +1,79 @@
+/* 2.0 этап 1: экран «Сегодня» (components/everyday/today*.tsx). Классы — с префиксом td-.
+   Цвета — только токены tokens.css и v1.css (новых не вводим). Текст на оранжевом — --on-orange (≈ 5,6:1),
+   на бирюзовой кнопке — --on-teal (в тёмной теме тёмный текст на светлой бирюзе). Зоны касания — не меньше 44px. */
+
+/* ───── герой ───── */
+.td-hero .hero-k{font-variant-numeric:tabular-nums}
+.td-hijri{margin:.15rem 0 0;font-size:.95rem;color:rgba(255,255,255,.84)}
+.td-hero .hero-h{margin-bottom:0}
+.td-left{display:block;margin-top:.25rem;font-size:1.05rem;font-weight:700;color:inherit;opacity:.88}
+
+/* ───── заголовок карточки-«кикер» ───── */
+.td-k{display:block;margin:0 0 .35rem;font-size:.78rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--orange-t)}
+
+/* ───── намаз ───── */
+.td-pt-top{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.td-pt-top h2{flex:1 1 12rem;margin:0;font-size:1.12rem;font-weight:700}
+.td-city-btn{flex:none}
+.td-rows{list-style:none;margin:.4rem 0 0;padding:0}
+.td-rows li{display:flex;align-items:center;gap:.6rem;min-height:48px;padding:.3rem .7rem;border-radius:12px;font-variant-numeric:tabular-nums}
+.td-rows li + li{border-top:1px solid var(--line)}
+.td-rows li span{flex:1;min-width:0;font-size:1.05rem}
+.td-rows li span small{display:block;font-size:.8rem;line-height:1.25;color:var(--muted)}
+.td-rows li b{font-size:1.25rem;font-weight:700}
+.td-rows li.past{color:var(--muted)}
+.td-rows li.past b{font-weight:600}
+.td-rows li.next{background:var(--orange);color:var(--on-orange);border-top-color:transparent}
+.td-rows li.next + li{border-top-color:transparent}
+.td-rows li.next span{font-weight:800}
+.td-rows li.next span small{color:var(--on-orange);font-weight:700}
+.td-src{margin:.6rem 0 0;font-size:.8rem;line-height:1.4;color:var(--muted)}
+.td-note{margin:.35rem 0;font-size:.85rem;color:var(--muted)}
+
+/* выбор города */
+.td-cities{margin:.6rem 0 .2rem;padding:.75rem;border-radius:var(--r-s);background:var(--mint)}
+.td-geo{width:100%;min-height:48px}
+/* на телефоне — две колонки, на широком экране — сколько поместится */
+.td-city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(7.5rem,40%),1fr));gap:.4rem;margin-top:.5rem}
+.td-city-grid .btn{min-height:44px;padding:.35rem .5rem;font-size:.92rem;line-height:1.15;background:var(--card);overflow-wrap:anywhere}
+.td-city-grid .btn.sel{background:var(--teal);color:var(--on-teal)}
+
+/* ───── азкары ───── */
+.td-seg{display:inline-flex;gap:.2rem;padding:.2rem;margin:.1rem 0 .6rem;border-radius:999px;background:var(--mint)}
+.td-seg button{min-height:44px;min-width:5.5rem;padding:.3rem 1rem;border:0;border-radius:999px;background:transparent;color:var(--teal);
+  font:inherit;font-weight:700;cursor:pointer}
+.td-seg button.on{background:var(--teal);color:var(--on-teal)}
+.td-zk-name{margin:.2rem 0 .1rem;font-size:1.15rem;font-weight:700}
+.td-ar{margin:.25rem 0 .15rem;font-family:var(--font-ar);font-size:1.8rem;line-height:1.75;text-align:right}
+.td-tr{margin:.2rem 0;font-style:italic;color:var(--teal-d)}
+.td-mean{margin:.2rem 0}
+.td-zsrc{margin:.3rem 0 0;font-size:.85rem;color:var(--muted)}
+.td-more{margin-top:.7rem;min-height:48px}
+
+/* ───── мысль дня ───── */
+.td-thought p{margin:.2rem 0 .1rem;font-size:1.15rem;line-height:1.45;font-weight:600;text-wrap:pretty}
+
+/* ───── тасбих ───── */
+.td-tas-in{display:flex;align-items:center;gap:1.1rem}
+.td-tas-btn{flex:none;width:8rem;height:8rem;border-radius:50%;border:0;background:var(--teal);color:var(--on-teal);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font:inherit;
+  box-shadow:0 0 0 .45rem var(--mint),0 10px 24px rgba(0,90,92,.25);touch-action:manipulation;-webkit-user-select:none;user-select:none;
+  transition:transform .12s var(--ease)}
+.td-tas-btn:active{transform:scale(.96)}
+.td-tas-btn b{font-size:2.8rem;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+.td-tas-btn small{margin-top:.25rem;font-size:.8rem;color:inherit;opacity:.9}
+.td-tas-txt{flex:1;min-width:0}
+.td-tas-txt .td-ar{margin:0;font-size:1.6rem}
+.td-tas-txt p{margin:.1rem 0}
+.td-tas-tr{font-weight:700;font-size:1.05rem}
+.td-tas-next{font-size:.9rem;color:var(--muted)}
+.td-tas-reset{min-height:44px;margin-top:.2rem}
+.td-tas-reset[disabled]{opacity:.5;cursor:default}
+.td-tas .td-note{margin-top:.8rem}
+
+@media (max-width:360px){
+  .td-tas-in{flex-direction:column;align-items:stretch;text-align:center}
+  .td-tas-btn{align-self:center}
+  .td-tas-txt .td-ar{text-align:center}
+}
+@media (prefers-reduced-motion:reduce){ .td-tas-btn{transition:none} .td-tas-btn:active{transform:none} }

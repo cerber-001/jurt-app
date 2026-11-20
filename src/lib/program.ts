@@ -16,6 +16,8 @@ export interface Program {
   incl: string[]; excl: string[]; pay_rule: string
   days: ProgramDay[]
   decisions: unknown
+  /** Код группы (UMRA-0009), если издатель программы его указал: по нему приложение узнаёт чужую программу */
+  code?: string
 }
 
 /** Программа и откуда она: savedAt = null — свежая из сети; число — сохранённая копия (мс; 0 — дата неизвестна) */

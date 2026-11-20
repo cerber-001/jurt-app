@@ -24,6 +24,11 @@ function demoNow(p: Program | null): Date | null {
   return new Date(utc + (Date.now() - STARTED))
 }
 
+/** «Сейчас» без подписки на обновление: демо-время ?at= (пояс — по умолчанию), иначе часы телефона */
+export function nowOrDemo(): Date {
+  return demoNow(null) ?? new Date()
+}
+
 /** Текущее время (или демо), обновляется раз в 30 секунд */
 export function useNow(p: Program | null): Date {
   const [, tick] = useState(0)

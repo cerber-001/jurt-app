@@ -9,6 +9,8 @@ import './styles/wow.css'
 import './styles/wow-flow.css'
 import './styles/wow-rite.css'
 import './styles/wow-speed.css'
+import './styles/everyday-today.css'
+import './styles/everyday-journey.css'
 import { App } from './app'
 import { initPwa } from './components/update'
 

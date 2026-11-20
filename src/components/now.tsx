@@ -156,7 +156,10 @@ const MORE: [string, string, string][] = [
 /** Подразделы без видимого h1 — скрытый заголовок для чтеца (у сборов, историй и «экрана Домой» h1 свой) */
 const SUB_H1: Record<string, string> = { dua: 'more.dua', zikr: 'more.zikr', prayer: 'more.prayer', where: 'more.where' }
 
-export function More({ sub, go }: { sub: string; go: Go }) {
+/** Пункт «Ещё» от режима меню (pilgrim.tsx): [адрес, ключ строки, значок] — чтобы ни один экран не потерялся */
+export type MoreRow = readonly [string, string, string]
+
+export function More({ sub, go, top }: { sub: string; go: Go; top?: MoreRow }) {
   const d = data.value
   if (sub) {
     return (
@@ -176,6 +179,7 @@ export function More({ sub, go }: { sub: string; go: Go }) {
   return (
     <div class="more-list">
       <h1 class="sr-only">{t('nav.more')}</h1>
+      {top && <button class="more-row" onClick={() => go(top[0])}><Icon id={top[2]} size={30} /><span>{t(top[1])}</span><i aria-hidden="true">›</i></button>}
       <button class="more-row" onClick={() => go('program')}><Glyph id="list" size={30} /><span>{t('nav.program')}</span><i aria-hidden="true">›</i></button>
       {MORE.map(([id, key, ico]) => (
         <button key={id} class="more-row" onClick={() => go('more/' + id)}><Icon id={ico} size={30} /><span>{t(key)}</span><i aria-hidden="true">›</i></button>

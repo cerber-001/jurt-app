@@ -5,6 +5,8 @@ import { lang, type Lang } from './store'
 import { S_SPEED } from './strings.speed'
 import { S_FLOW } from './strings.flow'
 import { S_RITE } from './strings.rite'
+import { S_TODAY } from './strings.today'
+import { S_JOURNEY } from './strings.journey'
 
 export const LANGS: [Lang, string][] = [['ru', 'Рус'], ['kk', 'Қаз'], ['en', 'Eng']]
 
@@ -289,7 +291,7 @@ const BASE: Record<string, [string, string, string]> = {
 
 // Строки версии 1.1 — по файлу на направление (так параллельная работа не задевает один файл)
 /** Весь словарь [ru, kk, en] — экспортируется для проверки полноты в i18n.test.ts */
-export const STRINGS: Readonly<Record<string, readonly [string, string, string]>> = { ...BASE, ...S_SPEED, ...S_FLOW, ...S_RITE }
+export const STRINGS: Readonly<Record<string, readonly [string, string, string]>> = { ...BASE, ...S_SPEED, ...S_FLOW, ...S_RITE, ...S_TODAY, ...S_JOURNEY }
 const S = STRINGS
 
 const IDX: Record<Lang, 0 | 1 | 2> = { ru: 0, kk: 1, en: 2 }
