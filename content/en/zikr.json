@@ -1,0 +1,137 @@
+[
+ {
+  "id": "tasbih",
+  "n": {
+   "ru": "Тасбих 33·33·33",
+   "kk": "Тәсбих 33·33·33",
+   "en": "Tasbih 33·33·33"
+  },
+  "goal": 100,
+  "fix": 100,
+  "ph": [
+   {
+    "ar": "سُبْحَانَ اللَّهِ",
+    "tr": "Subhanallah",
+    "ru": "Glory be to Allah"
+   },
+   {
+    "ar": "الْحَمْدُ لِلَّهِ",
+    "tr": "Al-hamdu lillah",
+    "ru": "Praise be to Allah"
+   },
+   {
+    "ar": "اللَّهُ أَكْبَرُ",
+    "tr": "Allahu akbar",
+    "ru": "Allah is Great"
+   },
+   {
+    "ar": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+    "tr": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu, wa huwa 'ala kulli shay'in qadir",
+    "ru": "There is no god but Allah, the One, He has no partner. To Him belong dominion and praise, and He has power over all things. (the hundredth time)"
+   }
+  ],
+  "h": "Whoever says after every prayer “Subhanallah” 33 times, “Al-hamdu lillah” 33 times, “Allahu akbar” 33 times, and for the hundredth time “La ilaha illallahu wahdahu la sharika lah…”, his sins will be forgiven, even if they are as many as the foam of the sea.",
+  "src": [
+   "Muslim, No. 597"
+  ]
+ },
+ {
+  "id": "tahlil",
+  "n": {
+   "ru": "Тахлиль",
+   "kk": "Таһлил",
+   "en": "Tahlil"
+  },
+  "goal": 100,
+  "ar": "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",
+  "tr": "La ilaha illallahu wahdahu la sharika lah, lahul-mulku wa lahul-hamdu, wa huwa 'ala kulli shay'in qadir",
+  "ru": "There is no god but Allah, the One, He has no partner. To Him belong dominion and praise, and He has power over all things.",
+  "h": "Whoever says this a hundred times in a day gets a reward like freeing ten slaves; a hundred good deeds are written for him, a hundred sins are erased, and he is protected from Shaytan until the evening.",
+  "src": [
+   "al-Bukhari, No. 6403",
+   "Muslim, No. 2691"
+  ]
+ },
+ {
+  "id": "bihamdihi",
+  "n": {
+   "ru": "Субхана-Ллахи ва би-хамдих",
+   "kk": "Субханаллаһи уа бихамдиһи",
+   "en": "SubhanAllahi wa bihamdihi"
+  },
+  "goal": 100,
+  "ar": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+  "tr": "Subhanallahi wa bihamdih",
+  "ru": "Glory be to Allah, and praise be to Him",
+  "h": "Whoever says “Subhanallahi wa bihamdih” a hundred times in a day, his sins will be forgiven, even if they are as many as the foam of the sea.",
+  "src": [
+   "al-Bukhari, No. 6405"
+  ]
+ },
+ {
+  "id": "azim",
+  "n": {
+   "ru": "Две лёгкие фразы",
+   "kk": "Екі жеңіл сөз",
+   "en": "Two light phrases"
+  },
+  "goal": 33,
+  "ar": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ",
+  "tr": "Subhanallahi wa bihamdihi, subhanallahil-'Azim",
+  "ru": "Glory be to Allah, and praise be to Him; glory be to Allah the Great",
+  "h": "Two phrases are light on the tongue, heavy on the Scales and beloved to the Most Merciful: “Subhanallahi wa bihamdihi, subhanallahil-'Azim”.",
+  "src": [
+   "al-Bukhari, No. 6406"
+  ]
+ },
+ {
+  "id": "istighfar",
+  "n": {
+   "ru": "Истигфар",
+   "kk": "Истиғфар",
+   "en": "Istighfar"
+  },
+  "goal": 100,
+  "ar": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+  "tr": "Astaghfirullaha wa atubu ilayh",
+  "ru": "I ask Allah for forgiveness and repent to Him",
+  "h": "The Prophet ﷺ said: “By Allah, I ask Allah for forgiveness and repent to Him more than seventy times a day”. And also: “O people, repent to Allah — I repent to Him a hundred times a day”.",
+  "src": [
+   "al-Bukhari, No. 6307",
+   "Muslim, No. 2702"
+  ]
+ },
+ {
+  "id": "salawat",
+  "n": {
+   "ru": "Салават",
+   "kk": "Салауат",
+   "en": "Salawat"
+  },
+  "goal": 100,
+  "ar": "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ وَعَلَىٰ آلِ مُحَمَّدٍ",
+  "tr": "Allahumma salli 'ala Muhammadin wa 'ala ali Muhammad",
+  "ru": "O Allah, bless Muhammad and the family of Muhammad",
+  "h": "The Prophet ﷺ said: “Whoever blesses me once, Allah blesses him ten times”.",
+  "src": [
+   "Muslim, No. 408"
+  ]
+ },
+ {
+  "id": "hawqala",
+  "n": {
+   "ru": "Ля хауля…",
+   "kk": "Лә хаула…",
+   "en": "La hawla…"
+  },
+  "goal": 33,
+  "ar": "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+  "tr": "La hawla wa la quwwata illa billah",
+  "ru": "No one has strength or power except Allah",
+  "h": "The Prophet ﷺ said to Abu Musa: “Shall I not show you one of the treasures of Paradise? It is ‘La hawla wa la quwwata illa billah’”.",
+  "src": [
+   "al-Bukhari, No. 6384",
+   "Muslim, No. 2704"
+  ]
+ }
+]

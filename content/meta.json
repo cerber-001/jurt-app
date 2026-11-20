@@ -1,0 +1,30 @@
+{
+ "source": "umra.jurt.kz index.html",
+ "extracted": "2026-10-25",
+ "madhhab": "ханафитский",
+ "anonymized": true,
+ "counts": {
+  "steps": 11,
+  "info": 2,
+  "dua": 16,
+  "zikr": 7
+ },
+ "hotels": {
+  "Медина": {
+   "en": "Madinah",
+   "name": "Worth Peninsula",
+   "card": "Peninsula Worth Hotel",
+   "q": "Peninsula Worth Hotel Madinah"
+  },
+  "Мекка": {
+   "en": "Makkah",
+   "name": "Address Jabal Omar",
+   "card": "Address Jabal Omar",
+   "q": "Address Jabal Omar Makkah"
+  }
+ },
+ "notes": [
+  "Даты в кикерах (01.11, 31.10) — для UMRA-0009; в этапе 1 подставлять из данных группы.",
+  "Тексты дуа и переводы — на сверке у знатока ханафитского фикха (как в v2)."
+ ]
+}
