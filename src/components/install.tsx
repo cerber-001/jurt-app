@@ -27,7 +27,7 @@ const ANDROID_INAPP = /; wv\)|FBAN|FBAV|Instagram|Line\/|Telegram|WhatsApp/i
 
 function isStandalone(): boolean {
   const nav = navigator as Navigator & { standalone?: boolean }
-  return nav.standalone === true || matchMedia('(display-mode: standalone)').matches
+  return nav.standalone === true || (typeof matchMedia === 'function' && matchMedia('(display-mode: standalone)').matches)
 }
 
 function isIOS(ua: string): boolean {

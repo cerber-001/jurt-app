@@ -13,7 +13,10 @@ import './styles/everyday-today.css'
 import './styles/everyday-journey.css'
 import { App } from './app'
 import { initPwa } from './components/update'
+import { askPersist } from './lib/persist'
 
 // 1.1: новая версия ждёт нажатия «Обновить» на плашке (components/update.tsx), а не перезагружает страницу сама
 initPwa(registerSW)
+// офлайн-копию — хранить постоянно (иначе Safari может её стереть); без окон и без ожидания
+void askPersist()
 render(<App />, document.getElementById('app')!)

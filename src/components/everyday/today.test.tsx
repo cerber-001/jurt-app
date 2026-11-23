@@ -45,6 +45,7 @@ function fakeFetch(url: string): Promise<Response> {
 }
 
 let root: HTMLDivElement
+let standalone = false       // гид открыт как приложение с экрана «Домой»
 const flush = async () => { for (let i = 0; i < 6; i++) await act(async () => { await new Promise(r => setTimeout(r, 0)) }) }
 const show = async () => { await act(() => { render(<TodayScreen go={() => undefined} />, root) }); await flush() }
 const text = () => root.textContent ?? ''
@@ -59,6 +60,8 @@ beforeEach(() => {
   // простой наступает сразу (в jsdom нет requestIdleCallback)
   vi.stubGlobal('requestIdleCallback', (cb: () => void) => setTimeout(cb, 0))
   vi.stubGlobal('cancelIdleCallback', (id: number) => clearTimeout(id))
+  standalone = false
+  vi.stubGlobal('matchMedia', (q: string) => ({ matches: standalone && q.includes('standalone'), media: q, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {} }))
   root = document.createElement('div'); document.body.append(root)
   lang.value = 'ru'
 })
@@ -225,8 +228,11 @@ describe('намаз сегодня', () => {
 
   test('список закрыли до ответа геопозиции — поздний ответ город не меняет', async () => {
     let ok: ((p: GeolocationPosition) => void) | null = null
-    vi.stubGlobal('navigator', Object.assign(Object.create(navigator), {
-      geolocation: { getCurrentPosition: (s: (p: GeolocationPosition) => void) => { ok = s } },
+    vi.stubGlobal('navigator', Object.create(navigator, {
+      // подсказка «на экран „Домой“» читает userAgent и maxTouchPoints — как у настоящего браузера
+      userAgent: { value: navigator.userAgent },
+      maxTouchPoints: { value: 0 },
+      geolocation: { value: { getCurrentPosition: (s: (p: GeolocationPosition) => void) => { ok = s } } },
     }))
     await show()
     const btn = root.querySelector<HTMLButtonElement>('.td-city-btn')!
@@ -367,5 +373,33 @@ describe('тасбих', () => {
     expect(live()).not.toMatch(/\d/)
     for (let i = 0; i < 29; i++) await act(() => { plus().click() })
     expect(live()).toBe('Аль-хамду ли-Лля́х')   // 34-е касание — новая фраза
+  })
+})
+
+describe('подсказка «на экран „Домой“» (офлайн держится надёжнее)', () => {
+  test('гид открыт в браузере — внизу «Сегодня» строка-подсказка; нажатие ведёт в «Ещё → Добавить на экран „Домой“»', async () => {
+    const go = vi.fn()
+    await act(() => { render(<TodayScreen go={go} />, root) }); await flush()
+    const hint = root.querySelector('.a2hs-hint')
+    expect(hint?.textContent).toContain('Добавьте гид на экран «Домой»')
+    await act(() => { root.querySelector<HTMLButtonElement>('.a2hs-go')!.click() })
+    expect(go).toHaveBeenCalledWith('more/install')
+  })
+  test('гид уже на экране «Домой» (standalone) — подсказки нет', async () => {
+    standalone = true
+    await show()
+    expect(root.querySelector('.a2hs-hint')).toBeNull()
+  })
+  test('подсказку закрыли — больше не показывается', async () => {
+    await show()
+    await act(() => { root.querySelector<HTMLButtonElement>('.a2hs-x')!.click() })
+    expect(root.querySelector('.a2hs-hint')).toBeNull()
+    await act(() => { render(null, root) }); await show()
+    expect(root.querySelector('.a2hs-hint')).toBeNull()
+  })
+  test('kk: подсказка по-казахски', async () => {
+    lang.value = 'kk'
+    await show()
+    expect(root.querySelector('.a2hs-hint')?.textContent).toContain('Басты экранға')
   })
 })

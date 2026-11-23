@@ -18,6 +18,7 @@ import { countdown, ownProgram, readTrip, savedProgram, tripOf } from '../../lib
 import { data, groupCode } from '../../lib/store'
 import { program } from '../today'
 import { LessonCard } from './lesson'
+import { InstallHint } from '../install'
 import { t } from '../../lib/i18n'
 
 /** Текущее время с точностью до минуты; экран сам перерисуется на следующей минуте */
@@ -113,6 +114,8 @@ export function TodayScreen({ go }: { go: (h: string) => void }) {
       <ThoughtCard iso={w.iso} road={road} />
       <TasbihCard iso={w.iso} />
       <LessonCard go={go} />
+      {/* без экрана «Домой» iPhone может стереть офлайн-копию — подсказка та же, что на «Сейчас» */}
+      <InstallHint go={go} />
     </div>
   )
 }
