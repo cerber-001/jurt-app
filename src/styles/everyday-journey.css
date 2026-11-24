@@ -40,7 +40,11 @@
 
 /* ───── Харам заранее (3D) и заявка ───── */
 .jr-3d p{margin:.3rem 0 0}
-.jr-soon{display:inline-block;padding:.2rem .7rem;border-radius:999px;background:var(--mint);color:var(--teal-d);font-size:.88rem;font-weight:700}
+.jr-3d .btns{margin:.7rem 0 .1rem}
+.jr-3d .btn{min-height:48px;padding-inline:1.6rem}
+.jr-3d .btn[aria-disabled=true]{opacity:.75;cursor:progress}
+.jr-3d-err{color:var(--red);font-weight:600}
+.jr-3d-saved{color:var(--done);font-weight:700;font-size:.92rem}
 .jr-lead-card{text-align:center}
 .jr-lead-card h2{display:block;margin:.1rem 0 .3rem}
 .jr-lead-card p{margin:0}

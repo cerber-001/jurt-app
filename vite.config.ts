@@ -34,7 +34,20 @@ export default defineConfig({
         // Обновления этим не ускоряются — новая версия всё равно ждёт нажатия «Обновить».
         clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,woff2,png,svg,json}'],
+        // этап 1а: модель Харама (≈2,4 МБ) не качается каждому при установке гида — только при первом открытии окна 3D
+        // (кэш haram3d-model ниже). Файлы JS самого окна (three.js) остаются в precache — их отдаёт **/*.js
+        globIgnores: ['**/node_modules/**/*', 'haram3d/**'],
         runtimeCaching: [
+          {
+            // наша модель Харама (public/haram3d/v1/): открыли один раз дома — дальше работает без сети.
+            // CacheFirst без срока держит файлы навсегда, поэтому версия — в пути и в имени кэша:
+            // при новой модели — каталог v2 (MODEL_BASE в src/lib/haram3d.ts) и новое имя кэша haram3d-model-v2
+            urlPattern: /\/haram3d\/v1\/.+\.(glb|json|wasm|js)$/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'haram3d-model-v1', expiration: { maxEntries: 20 }, cacheableResponse: { statuses: [200] } },
+          },
+          // Фото-3D Google (tile.googleapis.com) здесь намеренно НЕ кэшируется: правила Google запрещают хранить тайлы.
+          // Правил для tile.googleapis.com не добавлять; тайлы не пишутся и в IndexedDB/localStorage (components/haram3d/google.ts)
           {
             // API (Apps Script или Edge Function Supabase): сеть в приоритете, при офлайне — последний ответ
             urlPattern: /^https:\/\/(script\.google(usercontent)?\.com|[a-z0-9]+\.supabase\.co\/functions)\/.*/i,

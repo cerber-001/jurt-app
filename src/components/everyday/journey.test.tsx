@@ -195,12 +195,13 @@ describe('подготовка по дням', () => {
 })
 
 describe('Харам заранее и заявка', () => {
-  test('3D — заглушка «Готовится», без кнопки и ссылки на старый 3D', async () => {
+  test('3D — карточка с кнопкой «Открыть 3D» и честной подсказкой про интернет, без ссылки на старый 3D', async () => {
     await show()
     const card = root.querySelector('.jr-3d')!
     expect(card.textContent).toContain('Харам заранее (3D)')
-    expect(card.textContent).toContain('Готовится')
-    expect(card.querySelector('a,button')).toBeNull()
+    expect(card.querySelector('button')!.textContent).toBe('Открыть 3D')
+    expect(card.textContent).toContain('Фото-3D — только с интернетом. Наша модель работает и без сети, если один раз открыть её дома.')
+    expect(card.querySelector('a')).toBeNull()
     expect(root.innerHTML).not.toContain('umra.jurt.kz')
   })
 

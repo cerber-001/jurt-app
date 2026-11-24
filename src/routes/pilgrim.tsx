@@ -19,6 +19,7 @@ import { loadProgram, program } from '../components/today'
 import { TodayScreen } from '../components/everyday/today'
 import { JourneyScreen } from '../components/everyday/journey'
 import { LessonReader, lessonOpen } from '../components/everyday/lesson'
+import { Haram3dOverlay, haram3dOpen } from '../components/everyday/haram3d-card'
 import { Card, Top } from '../components/ui'
 import { t } from '../lib/i18n'
 import { runTransition, tabKind } from '../lib/transition'
@@ -136,7 +137,7 @@ export function Pilgrim() {
     firstRoute.current = false; byApp.current = false
     if (!skip) mainRef.current?.focus({ preventScroll: true })
   }, [route.value])
-  const overlay = !!nearby.value || lostOpen.value || finale.value || !!reading.value || lessonOpen.value !== null
+  const overlay = !!nearby.value || lostOpen.value || finale.value || !!reading.value || lessonOpen.value !== null || haram3dOpen.value
   const d = data.value
   void lang.value  // перерисовка при смене языка
   const [main, sub = ''] = route.value.split('/')
@@ -160,6 +161,7 @@ export function Pilgrim() {
       <Lost go={go} />
       <Reader />
       <LessonReader />
+      <Haram3dOverlay />
       <Finale />
     </>
   )

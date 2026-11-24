@@ -48,7 +48,12 @@ export const S_JOURNEY: Record<string, [string, string, string]> = {
   // Харам заранее
   'jr.3d': ['Харам заранее (3D)', 'Харамды алдын ала көру (3D)', 'The Haram in advance (3D)'],
   'jr.3d.t': ['Пройдите путь тавафа и саи до поездки — на месте всё будет знакомо.', 'Тауаф пен сағи жолын сапарға дейін өтіп көріңіз — орнында бәрі таныс болады.', 'Walk the path of tawaf and sa’i before the trip, and everything will feel familiar there.'],
-  'jr.3d.soon': ['Готовится', 'Дайындалуда', 'Coming soon'],
+  'jr.3d.open': ['Открыть 3D', '3D ашу', 'Open 3D'],
+  'jr.3d.hint': ['Фото-3D — только с интернетом. Наша модель работает и без сети, если один раз открыть её дома.', 'Фото-3D — тек интернетпен. Біздің модельді үйде бір рет ашсаңыз, интернетсіз де жұмыс істейді.', 'Photo 3D needs the internet. Our model also works offline if you open it once at home.'],
+  'jr.3d.loading': ['Загружается…', 'Жүктелуде…', 'Loading…'],
+  'jr.3d.err': ['3D не загрузилось. Проверьте интернет.', '3D жүктелмеді. Интернетті тексеріңіз.', '3D did not load. Check the internet connection.'],
+  'jr.3d.retry': ['Попробовать снова', 'Қайта көру', 'Try again'],
+  'jr.3d.saved': ['Наша модель сохранена — откроется и без сети', 'Біздің модель сақталды — интернетсіз де ашылады', 'Our model is saved and will open without the internet'],
 
   // «Хочу поехать»
   'jr.lead.h': ['Ещё не записаны в группу?', 'Әлі топқа жазылмадыңыз ба?', 'Not in a group yet?'],

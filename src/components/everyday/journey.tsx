@@ -1,5 +1,5 @@
 /* 2.0 этап 1: экран «Мой путь» — подготовка к умре по макету «Каждый день» (19.11.2026), сверху вниз:
-   дата поездки → отсчёт → подготовка по дням → «Харам заранее (3D)» (пока готовится) → «Хочу поехать» (если нет группы).
+   дата поездки → отсчёт → подготовка по дням → «Харам заранее (3D)» (этап 1а, haram3d-card.tsx) → «Хочу поехать» (если нет группы).
    Дата — из программы группы (только чтение) или указанная вручную (jurt.trip). Расчёты — lib/journey.ts. */
 import { useState } from 'preact/hooks'
 import { countdown, daysWord, fmtFull, leadText, leadUrl, ownProgram, readTrip, saveTrip, savedProgram, tripOf, type Countdown, type Trip } from '../../lib/journey'
@@ -10,6 +10,7 @@ import { t, tf } from '../../lib/i18n'
 import { program } from '../today'
 import { Card } from '../ui'
 import { PrepList } from './journey-prep'
+import { Haram3dCard } from './haram3d-card'
 
 type Go = (h: string) => void
 
@@ -70,17 +71,6 @@ function CountCard({ cd, trip, go }: { cd: Countdown; trip: Trip; go: Go }) {
   )
 }
 
-/** «Харам заранее (3D)» — пока заглушка: старый 3D заморожен, новый готовится */
-function Haram3d() {
-  return (
-    <section class="card jr-3d" aria-labelledby="jr-3d-h">
-      <h2 id="jr-3d-h">{t('jr.3d')}</h2>
-      <p>{t('jr.3d.t')}</p>
-      <p><span class="jr-soon">{t('jr.3d.soon')}</span></p>
-    </section>
-  )
-}
-
 /** «Хочу поехать»: WhatsApp с готовым текстом (номер — только из VITE_LEAD_WA); без номера — честное «скоро» */
 function Lead({ start }: { start: string }) {
   const [soon, setSoon] = useState(false)
@@ -119,7 +109,7 @@ export function JourneyScreen({ go }: { go: Go }) {
         ? <CountCard cd={cd} trip={trip} go={go} />
         : <Card cls="sand jr-none"><p>{t('jr.cd.none')}</p></Card>}
       <PrepList start={upcoming} go={go} />
-      <Haram3d />
+      <Haram3dCard />
       {!data.value && <Lead start={upcoming ?? ''} />}
     </>
   )

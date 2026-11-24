@@ -2,11 +2,13 @@ import { readFileSync } from 'node:fs'
 import { afterEach, describe, expect, test } from 'vitest'
 import { LANGS, STRINGS, fmtDate, pick, t } from './i18n'
 import { lang } from './store'
+import { S_HARAM3D, h3t } from './strings.haram3d'
 
-/* Весь словарь: основная часть i18n.ts и строки 1.1 из strings.*.ts */
-const DICT = STRINGS as Record<string, readonly string[]>
+/* Весь словарь: основная часть i18n.ts, строки 1.1 из strings.*.ts и отдельный словарь окна 3D
+   (strings.haram3d.ts — его грузит только ленивый просмотрщик, в STRINGS он не входит) */
+const DICT = { ...STRINGS, ...S_HARAM3D } as Record<string, readonly string[]>
 /* Текст всех файлов словаря — для поиска повторов ключей (в объекте повтор молча перезаписывает значение) */
-const LITERAL = ['./i18n.ts', './strings.speed.ts', './strings.flow.ts', './strings.rite.ts']
+const LITERAL = ['./i18n.ts', './strings.speed.ts', './strings.flow.ts', './strings.rite.ts', './strings.haram3d.ts']
   .map(f => readFileSync(new URL(f, import.meta.url), 'utf8')).join('\n')
 const CYR = /[А-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/
 
@@ -21,6 +23,17 @@ describe('словарь интерфейса', () => {
     const bad = Object.entries(DICT).filter(([, v]) =>
       !Array.isArray(v) || v.length !== 3 || v.some(s => typeof s !== 'string' || !s.trim()))
     expect(bad.map(([k]) => k)).toEqual([])
+  })
+
+  test('ключи окна 3D не пересекаются с основным словарём', () => {
+    expect(Object.keys(S_HARAM3D).filter(k => k in STRINGS)).toEqual([])
+  })
+
+  test('h3t: строка окна 3D на текущем языке, неизвестный ключ — как есть', () => {
+    expect(h3t('h3.close')).toBe('Закрыть')
+    lang.value = 'kk'; expect(h3t('h3.close')).toBe('Жабу')
+    lang.value = 'en'; expect(h3t('h3.close')).toBe('Close')
+    expect(h3t('h3.nope')).toBe('h3.nope')
   })
 
   test('ключи не дублируются (повтор молча перезаписывает значение)', () => {
