@@ -56,7 +56,7 @@ export interface Controller {
 export const GOOGLE_TIMEOUT_MS = 12_000
 const CREDITS_EVERY_MS = 1000
 /** Как часто сверять свет со временем Мекки: солнце за 30 с сдвигается на ≈ 0,1° */
-export const CLOCK_EVERY_MS = 30_000
+export const CLOCK_EVERY_MS = 10_000   // 24.11: было 30 с — часы «стояли» до полуминуты после смены минуты
 
 /** Ключ строки статуса: какой слой показан и почему */
 export function statusKey(s: ViewerState): string {
@@ -96,7 +96,7 @@ export function createController(host: HTMLElement, deps: ControllerDeps): Contr
     return { state, selectLayer() {}, selectView() {}, retryOurs() {}, dispose() {} }
   }
 
-  // свет по времени Мекки: сразу, потом раз в 30 с (переход плавный; при «уменьшить движение» — сразу)
+  // свет по времени Мекки: сразу, потом раз в 10 с (переход плавный; при «уменьшить движение» — сразу)
   const now = deps.now ?? (() => new Date())
   const tick = (instant: boolean) => {
     const c = engine.setTime(now(), instant)

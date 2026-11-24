@@ -185,3 +185,75 @@ describe('UpdateBar', () => {
     expect(el.textContent).not.toContain('✓')
   })
 })
+
+/* 24.11: Safari на iPhone крутил «Обновить» по кругу. Новая версия теперь включается сама (skipWaiting),
+   а плашка предлагает обычную перезагрузку */
+describe('новая версия включилась сама', () => {
+  type Listener = () => void
+  function fakeSw(controller: object | null) {
+    const ls: Listener[] = []
+    const sw = { controller, addEventListener: (_: string, f: Listener) => { ls.push(f) } }
+    Object.defineProperty(navigator, 'serviceWorker', { value: sw, configurable: true })
+    return { fire: () => ls.forEach(f => f()) }
+  }
+  afterEach(() => { Reflect.deleteProperty(navigator, 'serviceWorker') })
+
+  test('сменилась версия на открытой странице — плашка; «Обновить» просто перезагружает', async () => {
+    const sw = fakeSw({})
+    const m = await load()
+    const reload = vi.spyOn(m.page, 'reload').mockImplementation(() => {})
+    m.initPwa(register)
+    const el = box()
+    render(<m.UpdateBar />, el)
+    await act(() => { sw.fire() })
+    const btn = el.querySelector<HTMLButtonElement>('.upd-go')
+    expect(btn).not.toBeNull()
+    await act(() => { btn?.click() })
+    expect(reload).toHaveBeenCalledTimes(1)
+    expect(apply).not.toHaveBeenCalled()
+    render(null, el)
+  })
+
+  test('первая установка офлайн-копии плашку не показывает', async () => {
+    const sw = fakeSw(null)
+    const m = await load()
+    m.initPwa(register)
+    sw.fire()
+    expect(m.needRefresh.value).toBe(false)
+  })
+
+  test('ждущей версии сигнал «включайся» уходит и напрямую, не только через workbox', async () => {
+    const m = await load()
+    vi.spyOn(m.page, 'reload').mockImplementation(() => {})
+    m.initPwa(register)
+    const postMessage = vi.fn()
+    opts.onRegisteredSW?.('/sw.js', { update: vi.fn(), waiting: { postMessage } } as unknown as ServiceWorkerRegistration)
+    const el = box()
+    render(<m.UpdateBar />, el)
+    await act(() => { opts.onNeedRefresh?.() })
+    await act(() => { el.querySelector<HTMLButtonElement>('.upd-go')?.click() })
+    expect(postMessage).toHaveBeenCalledWith({ type: 'SKIP_WAITING' })
+    expect(apply).toHaveBeenCalledWith(true)
+    render(null, el)
+  })
+})
+
+describe('запасной путь «Обновить»', () => {
+  test('новая версия не включилась за 3 с — старая офлайн-копия снимается и страница грузится с сайта', async () => {
+    vi.useFakeTimers()
+    const m = await load()
+    const reload = vi.spyOn(m.page, 'reload').mockImplementation(() => {})
+    m.initPwa(register)
+    const unregister = vi.fn(async () => true)
+    opts.onRegisteredSW?.('/sw.js', { update: vi.fn(), unregister, waiting: { postMessage: vi.fn() } } as unknown as ServiceWorkerRegistration)
+    const el = box()
+    render(<m.UpdateBar />, el)
+    await act(() => { opts.onNeedRefresh?.() })
+    await act(() => { el.querySelector<HTMLButtonElement>('.upd-go')?.click() })
+    expect(unregister).not.toHaveBeenCalled()
+    await act(async () => { await vi.advanceTimersByTimeAsync(m.RELOAD_FALLBACK_MS) })
+    expect(unregister).toHaveBeenCalledTimes(1)
+    expect(reload).toHaveBeenCalledTimes(1)
+    render(null, el)
+  })
+})

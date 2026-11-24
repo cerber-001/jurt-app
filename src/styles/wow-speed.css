@@ -1,14 +1,16 @@
 /* 1.1: плашка обновления и значок офлайн-копии — A. Токены — в wow.css.
-   Плашка стоит в потоке над шапкой (не fixed): ничего не закрывает, уезжает при прокрутке.
+   Плашка обновления — внизу над меню (24.11); значок «сохранён» — сверху поверх шапки.
    Движение — только opacity/transform; при «Уменьшить движение» общий сброс в v1.css. */
 .upd,.upd-saved{
   display:flex;align-items:center;gap:.5rem;margin:0;
-  padding:calc(.5rem + env(safe-area-inset-top)) 1rem .5rem;
+  padding:.5rem 1rem;
   background:var(--deep);color:var(--sand-l);font-size:.95rem;line-height:1.3;
   animation:upd-in .6s var(--ease-soft) both;
 }
-/* шапка под плашкой: отступ под «чёлку» уже взяла плашка */
-.upd + .top{padding-top:.55rem}
+/* 24.11: плашка обновления — внизу, над меню, в поле зрения большого пальца (наверху её не замечали).
+   Поверх содержимого, но её можно убрать «Позже»; счётчик кругов не закрывает — он выше середины экрана */
+.upd{position:fixed;left:.75rem;right:.75rem;z-index:31;flex-wrap:wrap;
+  bottom:calc(4.6rem + env(safe-area-inset-bottom));border-radius:1rem;box-shadow:0 8px 28px rgba(0,0,0,.28)}
 .upd-t{flex:1;min-width:0}
 .upd-go,.upd-x{flex:none;min-height:44px;padding:.4rem .9rem;border-radius:999px;font:inherit;font-weight:700;cursor:pointer}
 .upd-go{background:var(--ember);color:var(--deep);border:0}
@@ -17,7 +19,8 @@
 .upd :focus-visible{outline:2px solid var(--sand-l);outline-offset:2px}
 /* значок «сохранён» приходит сам при первом открытии — поверх шапки, а не в потоке: страница под ним не сдвигается (CLS);
    касания проходят сквозь него, через 8 с он уходит сам */
-.upd-saved{position:fixed;top:0;left:0;right:0;z-index:30;justify-content:center;font-weight:600;pointer-events:none}
+.upd-saved{position:fixed;top:0;left:0;right:0;z-index:30;justify-content:center;font-weight:600;pointer-events:none;
+  padding-top:calc(.5rem + env(safe-area-inset-top))}
 /* строка на подстранице «Ещё → Добавить на экран „Домой“» */
 .upd-kept{margin:.25rem 0 0;font-weight:600}
-@keyframes upd-in{from{opacity:0;transform:translateY(-.5rem)}to{opacity:1;transform:none}}
+@keyframes upd-in{from{opacity:0;transform:translateY(.5rem)}to{opacity:1;transform:none}}

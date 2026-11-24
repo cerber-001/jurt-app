@@ -29,7 +29,7 @@ vi.mock('./ours', () => ({ loadOurs }))
 vi.mock('./google', () => ({ createGoogle }))
 
 import { Haram3dViewer } from './viewer'
-import { GOOGLE_TIMEOUT_MS } from './controller'
+import { CLOCK_EVERY_MS, GOOGLE_TIMEOUT_MS } from './controller'
 
 let root: HTMLDivElement
 const onClose = vi.fn()
@@ -291,11 +291,11 @@ describe('свет по времени Мекки', () => {
     expect(clock()).toBe('Now in Makkah: 23:05, night')
   })
 
-  test('раз в 30 с свет сверяется со временем — уже плавно; после закрытия часы не тикают', async () => {
+  test('раз в 10 с свет сверяется со временем — уже плавно; после закрытия часы не тикают', async () => {
     vi.useFakeTimers()
     await act(() => { render(<Haram3dViewer onClose={onClose} />, root) })
     engine.setTime.mockImplementation(() => ({ clock: '17:45', phase: 'evening' }))
-    await act(() => { vi.advanceTimersByTime(30_000) })
+    await act(() => { vi.advanceTimersByTime(CLOCK_EVERY_MS) })
     expect(engine.setTime).toHaveBeenCalledTimes(2)
     expect(engine.setTime.mock.calls[1][1]).toBe(false)
     expect(clock()).toBe('Сейчас в Мекке 17:45 — вечер')

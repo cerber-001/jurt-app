@@ -331,7 +331,7 @@ export async function loadOurs(engine: Engine, opt: { reducedMotion: boolean; si
   const handle: LayerHandle = {
     group,
     // толпа сама знает про «уменьшить движение» (люди стоят); точки при нём стоят — update не нужен
-    update: crowd ? dt => crowd.update(dt) : opt.reducedMotion ? undefined : dt => { tawaf?.step(dt); sai?.step(dt) },
+    update: crowd ? dt => crowd.update(dt) : dt => { tawaf?.step(dt); sai?.step(dt) },   // люди идут и при «Уменьшить движение» (crowd.ts)
     dispose: () => { offLight(); crowd?.dispose(); disposeTree(group); decor?.dispose(); tex?.dispose() },
   }
   engine.addLayer('ours', handle)

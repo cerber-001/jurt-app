@@ -319,7 +319,10 @@ function assemble(c: Ctx, o: CrowdOpts, corners: readonly P2[]): CrowdHandle {
   const pushT = tawafPushOut(corners, c.maqam ?? [1e6, 1e6]), pushS = c.ax ? saiPushOut(c.ax) : null
   const S = new Stage(nT + nS)
   const sols = [solT, solS] as const, lastCam = new Matrix4()
-  const motion = !o.reducedMotion
+  // 24.11: люди идут всегда. Их ход — суть показа (куда идти в тавафе и саи), а не украшение;
+  // на iPhone с «Уменьшить движение» толпа застывала, и Чингис решил, что 3D сломан.
+  // Настройка по-прежнему гасит пролёты камеры и плавную смену света (engine.ts, light.ts)
+  const motion = true
   let jump = true, drawn = false
 
   const stageAll = () => {

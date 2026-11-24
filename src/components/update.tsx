@@ -3,7 +3,10 @@
    (паломник может быть посреди тавафа). Нажал «Обновить» — новая версия включается и страница перезагружается.
    Плашка стоит в потоке страницы над шапкой, а не поверх содержимого: счётчик кругов она не закрывает.
    Новую версию спрашиваем раз в час и при возвращении в гид (не чаще раза в 10 минут, только при сети).
-   «Позже» прячет плашку до следующего возвращения в гид. Чтецу текст плашки объявляет постоянная живая область. */
+   «Позже» прячет плашку до следующего возвращения в гид. Чтецу текст плашки объявляет постоянная живая область.
+   24.11 (этап 1а): Safari на iPhone «Обновить» крутил по кругу — новая версия ждала сигнала и не включалась.
+   Теперь новая версия включается сама (workbox skipWaiting в vite.config.ts), а плашка лишь предлагает
+   перезагрузить страницу: обычная перезагрузка работает в любом браузере. Плашка — внизу, над меню. */
 import { signal } from '@preact/signals'
 import { useEffect, useState } from 'preact/hooks'
 import type { RegisterSWOptions } from 'virtual:pwa-register'
@@ -20,8 +23,8 @@ export const CHECK_MS = 60 * 60_000
 export const RECHECK_MS = 10 * 60_000
 /** Сколько секунд виден значок «сохранён на телефоне» */
 export const NOTE_MS = 8_000
-/** Если новая версия не включилась сама, через столько перезагружаем страницу */
-const RELOAD_FALLBACK_MS = 6_000
+/** Если новая версия не включилась за столько, снимаем старую офлайн-копию и грузим страницу с сайта */
+export const RELOAD_FALLBACK_MS = 3_000
 const SAVED_KEY = 'jurt.offline'
 
 export const needRefresh = signal(false)
@@ -35,6 +38,46 @@ let reg: ServiceWorkerRegistration | null = null
 let lastCheck = 0
 /** Новая версия скачана и ждёт (даже если плашку спрятали «Позже») */
 let waiting = false
+/** Новая версия уже взяла управление сама — осталось только перезагрузить страницу */
+let swapped = false
+
+/** Перезагрузка страницы — через объект, чтобы тест мог её подменить */
+export const page = { reload: (): void => location.reload() }
+
+/** Запасной путь «Обновить». WebKit (Safari и Chrome на iPhone) иногда держит новую версию в «ждёт»/«включается»
+   бесконечно — проверено 24.11 на WebKit 26. Тогда снимаем регистрацию старой офлайн-копии: страница грузится
+   с сайта, новая офлайн-копия ставится заново. Кэши (модель 3D, уроки) при этом остаются. */
+async function hardReload(): Promise<void> {
+  try { await reg?.unregister() } catch { /* не вышло — просто перезагрузим */ }
+  page.reload()
+}
+
+/** Новая версия скачалась — плашка сразу, не дожидаясь включения: WebKit может держать её в «включается» долго.
+   Первая установка офлайн-копии (страницей ещё никто не управлял) плашку не зовёт */
+function watchInstall(r: ServiceWorkerRegistration): void {
+  if (typeof r.addEventListener !== 'function') return
+  r.addEventListener('updatefound', () => {
+    const w = r.installing
+    if (!w) return
+    w.addEventListener('statechange', () => {
+      // installed — обычный путь; activating — WebKit иногда проскакивает installed без события
+      if ((w.state === 'installed' || w.state === 'activating') && navigator.serviceWorker?.controller && !needRefresh.value) {
+        waiting = true; needRefresh.value = true
+      }
+    })
+  })
+}
+
+/** Новая версия включилась сама (skipWaiting) — показать плашку. Первое включение офлайн-копии плашку не зовёт */
+function watchSwap(): void {
+  const sw = typeof navigator !== 'undefined' ? navigator.serviceWorker : undefined
+  if (!sw) return
+  let had = !!sw.controller
+  sw.addEventListener('controllerchange', () => {
+    if (had) { swapped = true; waiting = true; needRefresh.value = true }
+    had = true
+  })
+}
 
 /** Спросить сервер о новой версии — только при сети */
 function check(): void {
@@ -52,6 +95,7 @@ function onVisible(): void {
 
 export function initPwa(register: Register): void {
   if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVisible)
+  watchSwap()
   apply = register({
     immediate: true,
     onNeedRefresh() { waiting = true; needRefresh.value = true },
@@ -63,6 +107,7 @@ export function initPwa(register: Register): void {
     onRegisteredSW(_url, r) {
       if (!r) return
       reg = r
+      watchInstall(r)
       lastCheck = Date.now()
       setInterval(check, CHECK_MS)
     },
@@ -81,7 +126,10 @@ function UpdateNotice() {
   const [busy, setBusy] = useState(false)
   async function run() {
     setBusy(true)
-    setTimeout(() => location.reload(), RELOAD_FALLBACK_MS)
+    if (swapped) { page.reload(); return }
+    setTimeout(() => { void hardReload() }, RELOAD_FALLBACK_MS)
+    // старая версия без skipWaiting: сигнал шлём и напрямую — Safari на iPhone не всегда доносит его через workbox
+    reg?.waiting?.postMessage({ type: 'SKIP_WAITING' })
     await apply?.(true)
   }
   // текст плашки чтецу читает живая область (UpdateBar), здесь он только для глаз
